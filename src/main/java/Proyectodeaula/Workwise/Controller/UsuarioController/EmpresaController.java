@@ -287,4 +287,19 @@ public class EmpresaController {
         }
     }
 
+    @PostMapping("/ofertas")
+    public ResponseEntity<?> crearOfertaEmpresa(@RequestHeader("Authorization") String authHeader,
+            @RequestBody Oferta oferta) {
+        String email = jwtUtil.extractEmailFromHeader(authHeader);
+        Empresa empresa = uEmp.findByEmail(email);
+
+        if (empresa == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido o usuario no encontrado");
+        }
+
+        oferta.setEmpresa(empresa); // 👈 asignar empresa logueada
+        Oferta nueva = ofertaService.guardar(oferta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+    }
+
 }

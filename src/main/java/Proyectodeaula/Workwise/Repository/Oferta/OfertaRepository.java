@@ -12,5 +12,7 @@ import Proyectodeaula.Workwise.Model.Oferta;
 public interface OfertaRepository extends JpaRepository<Oferta, Long> {
     List<Oferta> findByEmpresa(Empresa empresa);
 
+    List<Oferta> findByActivoTrue();
+
     Page<Oferta> findByEmpresa(Empresa empresa, Pageable pageable);
 }

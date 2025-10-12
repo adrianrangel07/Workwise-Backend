@@ -50,10 +50,9 @@ public class Oferta {
     @Column(name = "nivel_Educacion", columnDefinition = "varchar(100)", nullable = false)
     private String nivel_Educacion;
     @Column(name = "activo", columnDefinition = "boolean", nullable = false)
-    private String activo;
+    private boolean activo = true;
     @Column(name = "comentarios", columnDefinition = "text", nullable = true)
     private String comentarios;
-
 
     @ManyToOne
     @JoinColumn(name = "empresa_id")

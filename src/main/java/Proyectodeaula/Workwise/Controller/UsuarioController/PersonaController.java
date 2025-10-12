@@ -54,13 +54,19 @@ public class PersonaController {
                 return ResponseEntity.badRequest().body("El usuario/contraseña no puede estar vacío");
             }
 
+            // Encriptar password
             persona.getUsuario().setPassword(passwordEncoder.encode(persona.getUsuario().getPassword()));
             persona.getUsuario().setRol("PERSONA");
 
-            Persona saved = personaRepository.save(persona);
+            persona.setActivo(true);
+            // Guardar persona (Hibernate debería guardar usuario también por cascade)
+            Persona saved = personaRepository.saveAndFlush(persona);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al registrar persona");
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al registrar persona: " + e.getMessage());
         }
     }
 
@@ -85,7 +91,9 @@ public class PersonaController {
         return ResponseEntity.ok(Map.of(
                 "message", "Login exitoso",
                 "token", token,
-                "personaId", persona.getId()));
+                "personaId", persona.getId(),
+                "nombre", persona.getNombre() // 👈 agregado
+        ));
     }
 
     // ==================== PERFIL ====================

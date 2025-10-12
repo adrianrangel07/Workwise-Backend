@@ -1,5 +1,8 @@
 package Proyectodeaula.Workwise.Model;
 
+import java.time.LocalDate;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,8 +35,8 @@ public class Persona {
     private int numero_documento;
     @Column(name = "tipo_Documento", columnDefinition = "varchar(20)", nullable = false)
     private String tipo_Documento;
-    @Column(name = "fecha_Nacimiento", columnDefinition = "int", nullable = false)
-    private int fecha_Nacimiento;
+    @Column(name = "fecha_Nacimiento", columnDefinition = "date", nullable = false)
+    private LocalDate fecha_Nacimiento;
     @Column(name = "genero", columnDefinition = "varchar(20)", nullable = false)
     private String genero;
     @Column(name = "direccion", columnDefinition = "varchar(100)", nullable = false)
@@ -53,7 +56,8 @@ public class Persona {
     @Column(name = "cv", columnDefinition = "blob")
     private byte[] cv;
 
-    @OneToOne
-    @JoinColumn(name = "usuario_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
+
 }

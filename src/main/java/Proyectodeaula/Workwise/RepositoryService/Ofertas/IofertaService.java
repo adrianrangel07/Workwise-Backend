@@ -17,4 +17,5 @@ public interface IofertaService {
     public Optional<Oferta>listarId(int id);
     public int save(Oferta O);
     public void delete (long Id);
+    Oferta guardar(Oferta oferta);
 }

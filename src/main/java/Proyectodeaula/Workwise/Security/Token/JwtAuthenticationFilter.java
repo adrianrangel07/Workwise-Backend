@@ -25,8 +25,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
+
+        String path = request.getServletPath();
+
+        // 🔑 Ignorar rutas públicas (login y registro)
+        if (path.equals("/api/personas/login") || path.equals("/api/personas/registrar")
+                || path.equals("/api/empresas/login") || path.equals("/api/empresas/registrar")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String authHeader = request.getHeader("Authorization");
 
@@ -35,10 +44,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             try {
                 String email = jwtUtil.extractEmail(jwt);
+                String rol = jwtUtil.extractRol(jwt); // 👈 asegúrate de tener este método en JwtUtil
 
                 if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
+                    var authorities = Collections.singletonList(
+                            new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + rol));
+
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, null,
+                            authorities);
+
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
@@ -50,4 +64,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 }
