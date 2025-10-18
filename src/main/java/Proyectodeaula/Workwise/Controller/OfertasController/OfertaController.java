@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import Proyectodeaula.Workwise.Model.CategoriaProfesional;
 import Proyectodeaula.Workwise.Model.Oferta;
 import Proyectodeaula.Workwise.Model.Persona;
+import Proyectodeaula.Workwise.Model.Dto.OfertaPublicaDTO;
 import Proyectodeaula.Workwise.Repository.Oferta.OfertaRepository;
 import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;
 import Proyectodeaula.Workwise.Service.Ofertas.OfertaService;
@@ -88,13 +89,16 @@ public class OfertaController {
         Persona persona = personaRepository.findById(personaId)
                 .orElseThrow(() -> new RuntimeException("Persona no encontrada"));
 
-        // obtener la categoría
         CategoriaProfesional categoria = persona.getCategoria();
 
-        // buscar ofertas con esa categoría
         List<Oferta> ofertas = ofertaRepository.findByCategoriaNombreIgnoreCase(categoria.getNombre());
 
-        return ResponseEntity.ok(ofertas);
+        // Convertir cada oferta a DTO
+        List<OfertaPublicaDTO> ofertasDTO = ofertas.stream()
+                .map(OfertaPublicaDTO::new)
+                .toList(); // o .collect(Collectors.toList()) si usas Java <16
+
+        return ResponseEntity.ok(ofertasDTO);
     }
 
 }

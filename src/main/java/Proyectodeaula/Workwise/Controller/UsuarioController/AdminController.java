@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;
+import Proyectodeaula.Workwise.Service.Usuarios.EmpresaService;
 import Proyectodeaula.Workwise.Service.Usuarios.PersonaService;
+
 
 @RestController
 @RequestMapping("/api/admin")
@@ -27,10 +29,19 @@ public class AdminController {
     @Autowired
     private Repository_Persona personaRepository;
 
+    @Autowired
+    private EmpresaService empresaService;
+
     @GetMapping("/usuarios")
     public ResponseEntity<?> listarUsuarios() {
         return ResponseEntity.ok(personaService.listar());
     }
+
+    @GetMapping("/empresas")
+    public String listarEmpresas() {
+        return ResponseEntity.ok(empresaService.listar_Emp()).toString();
+    }
+    
 
     @PutMapping("/usuarios/{id}/desactivar")
     public ResponseEntity<?> desactivarUsuario(@PathVariable Long id) {
