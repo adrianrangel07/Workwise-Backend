@@ -15,4 +15,7 @@ public interface OfertaRepository extends JpaRepository<Oferta, Long> {
     List<Oferta> findByActivoTrue();
 
     Page<Oferta> findByEmpresa(Empresa empresa, Pageable pageable);
+
+    List<Oferta> findByCategoriaNombreIgnoreCase(String nombreCategoria);
+
 }

@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // 🔑 Ignorar rutas públicas (login y registro)
+        //Ignorar rutas públicas (login y registro)
         if (path.equals("/api/personas/login") || path.equals("/api/personas/registrar")
                 || path.equals("/api/empresas/login") || path.equals("/api/empresas/registrar")) {
             filterChain.doFilter(request, response);
@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             try {
                 String email = jwtUtil.extractEmail(jwt);
-                String rol = jwtUtil.extractRol(jwt); // 👈 asegúrate de tener este método en JwtUtil
+                String rol = jwtUtil.extractRol(jwt);
 
                 if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     var authorities = Collections.singletonList(

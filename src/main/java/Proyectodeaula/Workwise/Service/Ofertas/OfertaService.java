@@ -18,7 +18,7 @@ import Proyectodeaula.Workwise.RepositoryService.Ofertas.IofertaService;
 public class OfertaService implements IofertaService {
 
     @Autowired
-    private OfertaRepository ofertaRepository; // tu JpaRepository<Oferta, Long>
+    private OfertaRepository ofertaRepository;
     
 
     @Autowired
@@ -87,7 +87,6 @@ public class OfertaService implements IofertaService {
             oferta.setSector_oferta(ofertaActualizada.getSector_oferta());
             oferta.setExperiencia(ofertaActualizada.getExperiencia());
             oferta.setNivel_Educacion(ofertaActualizada.getNivel_Educacion());
-            oferta.setComentarios(ofertaActualizada.getComentarios());
             return ofertaRepository.save(oferta);
         });
     }

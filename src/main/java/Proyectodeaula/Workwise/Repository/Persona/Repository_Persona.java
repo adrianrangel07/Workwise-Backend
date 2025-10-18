@@ -1,5 +1,6 @@
 package Proyectodeaula.Workwise.Repository.Persona;
 
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,5 +22,6 @@ public interface Repository_Persona extends JpaRepository<Persona, Long> {
             "LOWER(p.usuario.email) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Persona> buscarPorNombreApellidoDocumentoOEmail(@Param("query") String query, Pageable pageable);
 
+    @Query("SELECT p FROM Persona p WHERE p.usuario.email = :email")
+    Optional<Persona> findOptionalByEmail(@Param("email") String email);
 }
-

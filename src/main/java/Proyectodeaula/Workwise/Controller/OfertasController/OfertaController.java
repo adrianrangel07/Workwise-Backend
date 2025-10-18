@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import Proyectodeaula.Workwise.Model.CategoriaProfesional;
 import Proyectodeaula.Workwise.Model.Oferta;
+import Proyectodeaula.Workwise.Model.Persona;
+import Proyectodeaula.Workwise.Repository.Oferta.OfertaRepository;
+import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;
 import Proyectodeaula.Workwise.Service.Ofertas.OfertaService;
 
 @RestController
@@ -23,9 +27,20 @@ public class OfertaController {
     @Autowired
     private OfertaService ofertaService;
 
+    @Autowired
+    private OfertaRepository ofertaRepository;
+
+    @Autowired
+    private Repository_Persona personaRepository;
+
     // ✅ Listar todas las ofertas activas
     @GetMapping
     public ResponseEntity<List<Oferta>> listarOfertas() {
+        return ResponseEntity.ok(ofertaService.listarOfertas());
+    }
+
+    @GetMapping("/home")
+    public ResponseEntity<List<Oferta>> listarOfertasinvitado() {
         return ResponseEntity.ok(ofertaService.listarOfertas());
     }
 
@@ -67,4 +82,19 @@ public class OfertaController {
         return oferta.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/compatibles/{personaId}")
+    public ResponseEntity<?> obtenerOfertasCompatibles(@PathVariable Long personaId) {
+        Persona persona = personaRepository.findById(personaId)
+                .orElseThrow(() -> new RuntimeException("Persona no encontrada"));
+
+        // obtener la categoría
+        CategoriaProfesional categoria = persona.getCategoria();
+
+        // buscar ofertas con esa categoría
+        List<Oferta> ofertas = ofertaRepository.findByCategoriaNombreIgnoreCase(categoria.getNombre());
+
+        return ResponseEntity.ok(ofertas);
+    }
+
 }

@@ -41,11 +41,13 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/empresas/login", "/api/empresas/registrar",
-                                "/api/personas/login", "/api/personas/registrar")
-                        .permitAll()
+                        .requestMatchers("/api/personas/login", "/api/personas/registrar").permitAll() //personas
 
-                        .requestMatchers("/api/empresas/ofertas").hasRole("EMPRESA")
+                        .requestMatchers("/api/empresas/login", "/api/empresas/registrar").permitAll()  //empresas
+
+                        .requestMatchers("/api/ofertas/home").permitAll() //personas invitado
+ 
+                        .requestMatchers("/api/empresas/ofertas").hasAuthority("ROLE_EMPRESA")
 
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 

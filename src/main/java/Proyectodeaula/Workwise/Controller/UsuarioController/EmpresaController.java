@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import Proyectodeaula.Workwise.Model.CategoriaProfesional;
 import Proyectodeaula.Workwise.Model.Dto.VerificarPasswordDTO;
 import Proyectodeaula.Workwise.Model.Empresa;
 import Proyectodeaula.Workwise.Model.Oferta;
@@ -36,6 +37,7 @@ import Proyectodeaula.Workwise.Repository.Empresa.Crud_Emp;
 import Proyectodeaula.Workwise.Repository.Empresa.Repository_Emp;
 import Proyectodeaula.Workwise.RepositoryService.Ofertas.IofertaService;
 import Proyectodeaula.Workwise.Security.Token.JwtUtil;
+import Proyectodeaula.Workwise.Service.Usuarios.ClasificacionProfesionalService;
 import Proyectodeaula.Workwise.Service.Usuarios.EmpresaService;
 
 @RestController
@@ -58,6 +60,9 @@ public class EmpresaController {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ClasificacionProfesionalService clasificacionService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -290,16 +295,31 @@ public class EmpresaController {
     @PostMapping("/ofertas")
     public ResponseEntity<?> crearOfertaEmpresa(@RequestHeader("Authorization") String authHeader,
             @RequestBody Oferta oferta) {
-        String email = jwtUtil.extractEmailFromHeader(authHeader);
-        Empresa empresa = uEmp.findByEmail(email);
+        try {
+            // Extraer email del token
+            String email = jwtUtil.extractEmailFromHeader(authHeader);
+            Empresa empresa = uEmp.findByEmail(email);
 
-        if (empresa == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido o usuario no encontrado");
+            if (empresa == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Token inválido o usuario no encontrado");
+            }
+
+            // Asignar empresa
+            oferta.setEmpresa(empresa);
+
+            //Clasificar automáticamente según el título de la oferta
+            CategoriaProfesional categoria = clasificacionService.obtenerCategoriaPorProfesion(oferta.getTitulo());
+            oferta.setCategoria(categoria);
+
+            // Guardar oferta
+            Oferta nueva = ofertaService.guardar(oferta);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al crear oferta: " + e.getMessage());
         }
-
-        oferta.setEmpresa(empresa); // 👈 asignar empresa logueada
-        Oferta nueva = ofertaService.guardar(oferta);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
     }
 
 }

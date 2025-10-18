@@ -23,11 +23,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import Proyectodeaula.Workwise.Model.CategoriaProfesional;
 import Proyectodeaula.Workwise.Model.Dto.VerificarPasswordDTO;
 import Proyectodeaula.Workwise.Model.Persona;
 import Proyectodeaula.Workwise.Model.Usuario;
 import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;
 import Proyectodeaula.Workwise.Security.Token.JwtUtil;
+import Proyectodeaula.Workwise.Service.Usuarios.ClasificacionProfesionalService;
 import Proyectodeaula.Workwise.Service.Usuarios.PersonaService;
 
 @RestController
@@ -42,6 +44,9 @@ public class PersonaController {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ClasificacionProfesionalService clasificacionService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -59,7 +64,11 @@ public class PersonaController {
             persona.getUsuario().setRol("PERSONA");
 
             persona.setActivo(true);
-            // Guardar persona (Hibernate debería guardar usuario también por cascade)
+
+            CategoriaProfesional categoria = clasificacionService.obtenerCategoriaPorProfesion(persona.getProfesion());
+            persona.setCategoria(categoria);
+
+            // Guardar persona
             Persona saved = personaRepository.saveAndFlush(persona);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -92,8 +101,7 @@ public class PersonaController {
                 "message", "Login exitoso",
                 "token", token,
                 "personaId", persona.getId(),
-                "nombre", persona.getNombre() // 👈 agregado
-        ));
+                "nombre", persona.getNombre()));
     }
 
     // ==================== PERFIL ====================

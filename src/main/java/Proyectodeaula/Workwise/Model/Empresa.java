@@ -1,5 +1,9 @@
 package Proyectodeaula.Workwise.Model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -32,7 +37,7 @@ public class Empresa {
     private String direccion;
     @Column(name = "Razon_Social", columnDefinition = "varchar(100)", nullable = false)
     private String Razon_Social;
-    @Column(name = "nit", columnDefinition = "int", nullable = false)
+    @Column(name = "nit", columnDefinition = "varchar(20)", nullable = false)
     private int nit;
     @Column(name = "telefono", columnDefinition = "varchar(20)", nullable = false)
     private String telefono;
@@ -50,5 +55,9 @@ public class Empresa {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
+
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Oferta> ofertas;
 
 }

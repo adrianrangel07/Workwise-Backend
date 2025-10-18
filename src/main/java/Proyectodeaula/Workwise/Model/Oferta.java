@@ -1,5 +1,7 @@
 package Proyectodeaula.Workwise.Model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,10 +41,10 @@ public class Oferta {
     private String tipo_Contrato;
     @Column(name = "modalidad", columnDefinition = "varchar(50)", nullable = false)
     private String modalidad;
-    @Column(name = "fecha_Publicacion", columnDefinition = "varchar(50)", nullable = false)
-    private String fecha_Publicacion;
-    @Column(name = "fecha_Cierre", columnDefinition = "varchar(50)", nullable = false)
-    private String fecha_Cierre;
+    @Column(name = "fecha_Publicacion", columnDefinition = "Date", nullable = false)
+    private LocalDate fecha_Publicacion;
+    @Column(name = "fecha_Cierre", columnDefinition = "Date", nullable = false)
+    private LocalDate fecha_Cierre;
     @Column(name = "sector_oferta", columnDefinition = "varchar(100)", nullable = false)
     private String sector_oferta;
     @Column(name = "experiencia", columnDefinition = "int", nullable = false)
@@ -51,10 +53,13 @@ public class Oferta {
     private String nivel_Educacion;
     @Column(name = "activo", columnDefinition = "boolean", nullable = false)
     private boolean activo = true;
-    @Column(name = "comentarios", columnDefinition = "text", nullable = true)
-    private String comentarios;
 
     @ManyToOne
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private CategoriaProfesional categoria;
+
 }
