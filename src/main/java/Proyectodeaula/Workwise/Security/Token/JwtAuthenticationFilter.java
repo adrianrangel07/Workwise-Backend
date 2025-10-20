@@ -9,6 +9,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import Proyectodeaula.Workwise.Security.PublicRoutes;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,9 +19,11 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final PublicRoutes publicRoutes;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, PublicRoutes publicRoutes) {
         this.jwtUtil = jwtUtil;
+        this.publicRoutes = publicRoutes;
     }
 
     @Override
@@ -30,9 +33,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        //Ignorar rutas públicas (login y registro)
-        if (path.equals("/api/personas/login") || path.equals("/api/personas/registrar")
-                || path.equals("/api/empresas/login") || path.equals("/api/empresas/registrar")) {
+        boolean esRutaPublica = publicRoutes.getPublicPaths().stream()
+                .anyMatch(path::startsWith);
+
+        if (esRutaPublica) {
             filterChain.doFilter(request, response);
             return;
         }
