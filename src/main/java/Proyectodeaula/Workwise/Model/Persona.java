@@ -54,7 +54,7 @@ public class Persona {
     private boolean activo;
 
     @Lob
-    @Column(name = "cv", columnDefinition = "blob")
+    @Column(name = "cv", columnDefinition = "Longblob")
     private byte[] cv;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

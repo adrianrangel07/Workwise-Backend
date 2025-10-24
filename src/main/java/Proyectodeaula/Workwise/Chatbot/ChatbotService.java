@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
@@ -20,6 +19,7 @@ public class ChatbotService {
         public ChatbotService() {
                 respuestas = new HashMap<>();
                 sinonimos = new HashMap<>();
+
                 inicializarSinonimos();
                 inicializarRespuestas();
         }
@@ -28,98 +28,127 @@ public class ChatbotService {
         // 🔹 SINÓNIMOS / INTENCIONES
         // ============================================================
         private void inicializarSinonimos() {
+
                 sinonimos.put("saludo", Arrays.asList(
-                                "hola", "holi", "holis", "buenas", "saludos", "qué tal", "que tal",
-                                "buenos días", "buenas tardes", "buenas noches", "hey", "hi", "hello",
-                                "buen día", "qué hubo", "que hubo", "qué pasa", "que pasa", "alo", "aloja"));
+                                "alo", "aloha", "buen día", "buenas", "buenas noches", "buenas tardes",
+                                "buenos días", "hello", "hey", "hi", "hola", "holi", "holis",
+                                "qué hubo", "qué pasa", "qué tal", "que hubo", "que pasa", "que tal",
+                                "saludos"));
 
                 sinonimos.put("login", Arrays.asList(
-                                "iniciar sesión", "iniciar sesion", "loguear", "log in", "sign in",
-                                "acceder", "entrar", "ingresar", "acceso", "identificarme",
-                                "ya tengo cuenta", "tengo cuenta", "ya estoy registrado", "ya me registré",
-                                "ya me registre", "quiero entrar", "necesito entrar", "abrir sesión",
-                                "abrir sesion", "entrar al sistema", "iniciar cuenta", "continuar sesión"));
+                                "abrir sesión", "abrir sesion", "acceder", "acceso", "continuar sesión", "entrar",
+                                "entrar al sistema", "identificarme", "iniciar cuenta", "iniciar sesión",
+                                "iniciar sesion",
+                                "ingresar", "log in", "loguear", "necesito entrar", "sign in", "tengo cuenta",
+                                "ya estoy registrado", "ya me registré", "ya me registre", "ya tengo cuenta"));
 
                 sinonimos.put("registro", Arrays.asList(
-                                "registrar", "registrarme", "registro", "crear cuenta", "hacer cuenta",
-                                "nuevo usuario", "abrir cuenta", "darme de alta", "inscribirme",
-                                "suscribirme", "unirme", "crear perfil", "hacer perfil", "sign up",
-                                "registrarse", "matricularme", "afiliarme", "crear usuario", "crear perfil nuevo"));
+                                "abrir cuenta", "afiliarme", "crear cuenta", "crear perfil", "crear perfil nuevo",
+                                "crear usuario", "darme de alta", "hacer cuenta", "hacer perfil", "inscribirme",
+                                "matricularme", "nuevo usuario", "registrar", "registrarme", "registrarse", "registro",
+                                "sign up", "suscribirme", "unirme"));
 
                 sinonimos.put("oferta", Arrays.asList(
-                                "oferta", "ofertas", "trabajo", "empleo", "vacante", "vacantes",
-                                "puesto", "puestos", "convocatoria", "convocatorias", "bolsa de trabajo",
-                                "trabajos", "empleos", "buscar trabajo", "encontrar trabajo",
-                                "oportunidades", "oportunidad laboral", "laburo", "chamba",
-                                "quiero trabajar", "necesito trabajo", "busco empleo", "buscar empleo",
-                                "ver empleos", "ver vacantes", "ver ofertas"));
+                                "bolsa de trabajo", "buscar empleo", "buscar trabajo", "busco empleo",
+                                "chamba", "convocatoria", "convocatorias", "empleo", "empleos", "encontrar trabajo",
+                                "laburo", "necesito trabajo", "oferta", "ofertas", "oportunidad laboral",
+                                "oportunidades", "puesto", "puestos", "trabajo", "trabajos",
+                                "ver empleos", "ver ofertas", "ver vacantes", "vacante", "vacantes",
+                                "quiero trabajar"));
 
                 sinonimos.put("perfil", Arrays.asList(
-                                "perfil", "mi perfil", "mis datos", "datos personales",
-                                "actualizar información", "editar perfil", "modificar perfil",
-                                "cambiar datos", "actualizar datos", "mi cuenta", "configuración",
-                                "preferencias", "información personal", "editar información",
-                                "actualizar cuenta", "gestionar cuenta", "gestionar perfil",
-                                "ver perfil", "ajustes de cuenta", "configurar perfil"));
+                                "actualizar cuenta", "actualizar datos", "actualizar información",
+                                "ajustes de cuenta", "cambiar datos", "configuración", "configurar perfil",
+                                "datos personales", "editar información", "editar perfil", "gestionar cuenta",
+                                "gestionar perfil", "información personal", "mi cuenta", "mi perfil",
+                                "modificar perfil", "preferencias", "ver perfil"));
 
                 sinonimos.put("información", Arrays.asList(
-                                "información", "info", "qué puedes hacer", "que puedes hacer",
-                                "qué puedo hacer", "que puedo hacer", "qué hay", "que hay",
-                                "qué ofreces", "que ofreces", "qué haces", "que haces",
-                                "para qué sirves", "para que sirves", "funciones", "capacidades",
-                                "ayuda", "help", "soporte", "asistencia", "qué es esto", "que es esto",
-                                "cómo funcionas", "como funcionas", "cómo me ayudas", "para qué sirves"));
+                                "asistencia", "ayuda", "capacidades", "como funcionas", "cómo funcionas",
+                                "como me ayudas", "cómo me ayudas", "funciones", "help", "info", "información",
+                                "para que sirves", "para qué sirves", "para qué me sirves", "que haces",
+                                "qué haces", "que hay", "qué hay", "que puedo hacer", "qué puedo hacer",
+                                "que puedes hacer", "qué puedes hacer", "que ofreces", "qué ofreces",
+                                "qué es esto", "que es esto", "soporte"));
 
                 sinonimos.put("despido", Arrays.asList(
-                                "gracias", "muchas gracias", "ok", "vale", "perfecto", "adios", "adiós",
-                                "hasta luego", "nos vemos", "chao", "bye", "goodbye", "hasta pronto",
-                                "ciao", "listo", "de acuerdo", "okey", "okeydokey", "genial", "está bien",
-                                "esta bien", "bien", "excelente", "fantástico", "super", "chévere",
-                                "me sirvió", "me ayudaste", "todo claro", "entendido"));
+                                "adios", "adiós", "bien", "bye", "chévere", "ciao", "de acuerdo", "entendido",
+                                "excelente", "fantástico", "genial", "gracias", "hasta luego", "hasta pronto",
+                                "listo", "me ayudaste", "me sirvió", "muchas gracias", "nos vemos", "ok",
+                                "okey", "okeydokey", "perfecto", "super", "todo claro", "vale"));
 
                 sinonimos.put("ayuda", Arrays.asList(
-                                "ayuda", "help", "socorro", "auxilio", "no sé", "no se",
-                                "no entiendo", "me pierdo", "qué hago", "que hago", "cómo funciona",
-                                "como funciona", "necesito ayuda", "me ayudas", "puedes ayudarme",
-                                "no sé usar", "no sé qué hacer", "necesito soporte", "ayúdame", "ayudame",
-                                "explicame", "dame una guía", "tengo dudas", "no comprendo"));
+                                "ayuda", "ayudame", "ayúdame", "dame una guía", "explicame", "help",
+                                "me ayudas", "me pierdo", "necesito ayuda", "necesito soporte",
+                                "no comprendo", "no entiendo", "no se", "no sé", "no sé qué hacer",
+                                "no sé usar", "puedes ayudarme", "qué hago", "que hago", "socorro",
+                                "auxilio", "tengo dudas"));
 
                 sinonimos.put("postulacion", Arrays.asList(
-                                "postularme", "postular", "como me postulo", "aplicar", "inscribirme",
-                                "enviar solicitud", "quiero postularme", "necesito postularme",
-                                "cómo postular", "como postular", "dónde postular", "donde postular",
-                                "proceso de postulación", "proceso de postulacion", "hacer postulación",
-                                "hacer postulacion", "registrar postulación", "registrar postulacion",
-                                "aplicación", "postulación", "aplicar oferta", "enviar cv", "mandar cv"));
+                                "aplicar", "aplicar oferta", "aplicación", "como me postulo", "cómo me postulo",
+                                "como postular", "cómo postular", "donde postular", "dónde postular", "enviar cv",
+                                "enviar hoja de vida", "enviar solicitud", "hacer postulacion", "hacer postulación",
+                                "mandar cv", "necesito postularme", "postular", "postularme", "postulación",
+                                "proceso de postulacion", "proceso de postulación", "registrar postulacion",
+                                "registrar postulación", "quiero postularme"));
 
                 sinonimos.put("hoja_vida", Arrays.asList(
-                                "hoja de vida", "hoja vida", "curriculum", "currículum", "cv", "c.v.",
-                                "subir cv", "adjuntar cv", "adjuntar hoja de vida", "subir hoja de vida",
-                                "cargar cv", "cargar hoja de vida", "actualizar cv", "actualizar hoja de vida",
-                                "subir mi cv", "subir mi hoja de vida", "adjuntar mi cv", "enviar cv",
-                                "enviar hoja de vida", "mandar cv", "mandar hoja de vida",
-                                "mi hoja de vida", "mi cv", "plantilla cv", "formato hoja de vida",
-                                "modelo hoja de vida", "ejemplo de cv", "ejemplo de hoja de vida",
-                                "crear cv", "crear hoja de vida", "hacer cv", "hacer hoja de vida",
-                                "editar cv", "editar hoja de vida", "modificar cv", "modificar hoja de vida",
-                                "descargar plantilla", "ver plantilla", "cargar documento laboral",
-                                "actualizar documento", "subir archivo de cv", "actualizar curriculum",
-                                "ver ejemplos de cv", "plantillas de hoja de vida", "ver plantillas"));
-
-                sinonimos.put("guias_entrevista", Arrays.asList(
-                                "guía de entrevista", "guías de entrevista", "consejos de entrevista",
-                                "tips de entrevista", "preparar entrevista", "preguntas entrevista",
-                                "recomendaciones entrevista", "ayuda entrevista", "como ir a entrevista",
-                                "cómo responder entrevista", "prepararme para entrevista",
-                                "guia entrevista", "manual entrevista", "ver guías", "ver consejos",
-                                "ver tips", "entrevista laboral", "simulacro entrevista"));
+                                "actualizar curriculum", "actualizar cv", "actualizar hoja de vida",
+                                "actualizar documento", "adjuntar cv", "adjuntar hoja de vida", "adjuntar mi cv",
+                                "cargar cv", "cargar hoja de vida", "cargar documento laboral", "crear cv",
+                                "crear hoja de vida", "curriculum", "currículum", "cv", "descargar plantilla",
+                                "editar cv", "editar hoja de vida", "enviar cv", "enviar hoja de vida",
+                                "ejemplo de cv", "ejemplo de hoja de vida", "formato hoja de vida",
+                                "hacer cv", "hacer hoja de vida", "hoja de vida", "hoja vida", "mandar cv",
+                                "mandar hoja de vida", "mi cv", "mi hoja de vida", "modificar cv",
+                                "modificar hoja de vida", "modelo hoja de vida", "plantilla cv",
+                                "plantillas de hoja de vida", "subir archivo de cv", "subir cv",
+                                "subir hoja de vida", "subir mi cv", "subir mi hoja de vida", "ver ejemplos de cv",
+                                "ver plantillas"));
 
                 sinonimos.put("tiempo_respuesta", Arrays.asList(
-                                "tiempo de respuesta", "cuánto tardan", "cuánto se demoran",
-                                "me van a responder", "cuando responden", "respuesta empresa",
-                                "respuesta postulación", "demora empresa", "demora en responder",
-                                "tiempo espera", "tardan en responder", "tiempo de espera",
-                                "cuando sabré", "cuándo sabré", "me avisarán", "estado postulación"));
+                                "cuando responden", "cuando sabré", "cuándo sabré", "cuánto se demoran",
+                                "cuánto tardan", "demora empresa", "demora en responder", "estado postulación",
+                                "me avisarán", "me van a responder", "respuesta empresa", "respuesta postulación",
+                                "tardan en responder", "tiempo de espera", "tiempo de respuesta", "tiempo espera"));
+
+                sinonimos.put("guias_entrevista", Arrays.asList(
+                                "ayuda entrevista", "como ir a entrevista", "cómo ir a entrevista",
+                                "cómo responder entrevista", "consejos de entrevista", "entrevista laboral",
+                                "guia entr      evista", "guía de entrevista", "guías de entrevista",
+                                "manual entrevista", "preparar entrevista", "prepararme para entrevista",
+                                "preguntas entrevista", "recomendaciones entrevista", "simulacro entrevista",
+                                "tips de entrevista", "ver consejos", "ver guías", "ver tips"));
+
+                // 📊 NUEVO: DATOS / ESTADÍSTICAS
+                sinonimos.put("datos", Arrays.asList(
+                                "estadísticas", "estadisticas", "datos", "informes", "gráficas", "graficas",
+                                "números", "numeros", "porcentajes", "tasas", "datos del desempleo",
+                                "información estadística", "información de desempleo", "estadísticas laborales",
+                                "estadísticas de empleo", "datos laborales", "datos sobre empleo",
+                                "estadísticas de la página", "datos de la plataforma", "rendimiento de la página",
+                                "informes de trabajo", "estadísticas de usuarios", "datos de registro",
+                                "datos de uso", "tasa de desempleo", "gráficos de empleo",
+                                "estadísticas de Cartagena"));
+
+                // 🧑‍💻 NUEVO: SOBRE NOSOTROS / CREADORES
+                sinonimos.put("sobre_nosotros", Arrays.asList(
+                                "acerca de", "acerca de workwise", "creadores", "desarrolladores",
+                                "equipo de trabajo", "fundadores", "historia", "información del proyecto",
+                                "información sobre ustedes", "origen", "quiénes son", "quienes son",
+                                "quiénes crearon esto", "quién lo hizo", "quien lo hizo", "sobre la plataforma",
+                                "sobre la empresa", "sobre nosotros", "workwise team", "workwise cartagena",
+                                "quién desarrolló esto", "quien desarrolló esto", "quién está detrás",
+                                "quien está detrás"));
+
+                // Normaliza todos los sinónimos agregados
+                for (var entry : sinonimos.entrySet()) {
+                        List<String> normalizados = entry.getValue().stream()
+                                        .map(this::normalizarTexto)
+                                        .toList();
+                        sinonimos.put(entry.getKey(), normalizados);
+                }
+
         }
 
         // ============================================================
@@ -310,6 +339,40 @@ public class ChatbotService {
                                 crearRespuesta("👋 ¡Hasta luego! Recuerda mantener tu perfil actualizado y seguir postulando a nuevas vacantes.",
                                                 botonesMenuPrincipal())));
 
+                // 📊 DATOS Y ESTADÍSTICAS
+                respuestas.put("datos", List.of(
+                                crearRespuesta("📈 Aquí puedes consultar estadísticas actualizadas sobre el empleo en Cartagena, incluyendo tasas de desempleo, sectores más activos y cifras recientes.",
+                                                List.of(crearBoton("Ver estadísticas", "abrir_estadistica"))),
+                                crearRespuesta("¿Quieres conocer cómo está el panorama laboral en la ciudad? 🌆 Accede a los datos de desempleo, empleabilidad y más aquí 👇",
+                                                List.of(crearBoton("Abrir estadísticas", "abrir_estadistica"))),
+                                crearRespuesta("📊 En esta sección encontrarás información detallada sobre los indicadores laborales y el desempeño del mercado de trabajo en Cartagena.",
+                                                List.of(crearBoton("Ver datos laborales", "abrir_estadistica"))),
+                                crearRespuesta("Puedes explorar datos sobre la actividad económica y el nivel de contratación en diferentes sectores de la ciudad.",
+                                                List.of(crearBoton("Ver estadísticas", "abrir_estadistica"))),
+                                crearRespuesta("💡 También podrás consultar cifras sobre el uso de la plataforma Workwise: número de usuarios registrados, postulaciones activas y empresas participantes.",
+                                                List.of(crearBoton("Estadísticas Workwise", "abrir_estadistica"))),
+                                crearRespuesta("¿Te interesa conocer las cifras de desempleo o el crecimiento de la plataforma? 🔍 Aquí puedes verlo todo en tiempo real.",
+                                                List.of(crearBoton("Ver datos", "abrir_estadistica"))),
+                                crearRespuesta("Estos datos te ayudarán a entender mejor las tendencias del mercado laboral y cómo posicionarte para conseguir empleo 💼.",
+                                                List.of(crearBoton("Explorar estadísticas", "abrir_estadistica")))));
+
+                // 🧑‍💻 SOBRE NOSOTROS / CREADORES
+                respuestas.put("sobre_nosotros", List.of(
+                                crearRespuesta("👋 Somos *Workwise Cartagena*, una plataforma diseñada para conectar talento con oportunidades laborales locales. 🌴",
+                                                List.of(crearBoton("Conocer más", "abrir_sobre_nosotros"))),
+                                crearRespuesta("💼 En Workwise ayudamos a personas y empresas de Cartagena a encontrarse. Promovemos la empleabilidad y el crecimiento profesional en la región.",
+                                                List.of(crearBoton("Ver información", "abrir_sobre_nosotros"))),
+                                crearRespuesta("🌟 Nuestro objetivo es impulsar el empleo en Cartagena mediante herramientas digitales accesibles, eficientes y seguras.",
+                                                List.of(crearBoton("Conocer nuestra misión", "abrir_sobre_nosotros"))),
+                                crearRespuesta("📊 Workwise nació como un proyecto académico y social que busca mejorar la conexión entre buscadores de empleo y reclutadores locales.",
+                                                List.of(crearBoton("Saber más", "abrir_sobre_nosotros"))),
+                                crearRespuesta("🤝 Detrás de Workwise hay un equipo comprometido con la innovación y el desarrollo económico de Cartagena.",
+                                                List.of(crearBoton("Ver equipo", "abrir_sobre_nosotros"))),
+                                crearRespuesta("👨‍💻👩‍💼 Somos un grupo de desarrolladores y profesionales locales que queremos facilitar tu camino laboral. ¡Nos encanta verte crecer! 🚀",
+                                                List.of(crearBoton("Conocer al equipo", "abrir_sobre_nosotros"))),
+                                crearRespuesta("¿Quieres saber quiénes están detrás de la plataforma? 💡 Aquí puedes conocer más sobre nosotros, nuestra historia y objetivos.",
+                                                List.of(crearBoton("Ver más", "abrir_sobre_nosotros")))));
+
                 // 🧠 DEFAULT / RESPUESTA POR DEFECTO
                 respuestas.put("default", List.of(
                                 crearRespuesta("No estoy seguro de eso 😅. Puedo ayudarte con registro, login, ofertas de trabajo, perfil o guías de entrevista.",
@@ -337,56 +400,117 @@ public class ChatbotService {
                 return posibles.get(random.nextInt(posibles.size()));
         }
 
-        private String detectarIntencion(String mensaje) {
-                mensaje = limpiarRuido(mensaje);
+        private String normalizarTexto(String texto) {
+                if (texto == null)
+                        return "";
+                String normalizado = Normalizer.normalize(texto, Normalizer.Form.NFD)
+                                .replaceAll("\\p{InCombiningDiacriticalMarks}+", ""); // Elimina tildes
+                normalizado = normalizado.toLowerCase()
+                                .replaceAll("[^a-zñ0-9 ]", " ") // elimina símbolos raros
+                                .replaceAll("\\s+", " ") // compacta espacios
+                                .trim();
+                return normalizado;
+        }
 
-                for (Map.Entry<String, List<String>> entry : sinonimos.entrySet()) {
-                        if (contieneSinonimo(mensaje, entry.getValue()))
-                                return entry.getKey();
+        private String detectarIntencion(String mensaje) {
+                String[] palabras = mensaje.split(" ");
+                String mejorCoincidencia = null;
+                int mejorPuntaje = 0;
+
+                for (Map.Entry<String, List<String>> entrada : sinonimos.entrySet()) {
+                        int puntaje = 0;
+
+                        for (String sinonimo : entrada.getValue()) {
+                                String s = normalizarTexto(sinonimo);
+
+                                // Coincidencia directa
+                                if (mensaje.contains(s)) {
+                                        puntaje += 3;
+                                }
+
+                                // Coincidencia parcial por palabras
+                                for (String palabra : palabras) {
+                                        if (s.contains(palabra) || palabra.contains(s)) {
+                                                puntaje += 1;
+                                        }
+                                }
+
+                                // Coincidencia difusa (Levenshtein simplificado)
+                                if (calcularDistanciaLevenshtein(s, mensaje) <= 2 && mensaje.length() > 4) {
+                                        puntaje += 2;
+                                }
+                        }
+
+                        if (puntaje > mejorPuntaje) {
+                                mejorPuntaje = puntaje;
+                                mejorCoincidencia = entrada.getKey();
+                        }
                 }
 
-                if (contienePatron(mensaje, "no.*entiendo", "no.*sé", "no.*se"))
-                        return "ayuda";
-
-                return "default";
+                return mejorPuntaje > 1 ? mejorCoincidencia : null;
         }
 
         // ============================================================
         // 🔹 UTILIDADES DE DETECCIÓN
         // ============================================================
-        private boolean contieneSinonimo(String texto, List<String> sinonimos) {
-                for (String s : sinonimos)
-                        if (texto.contains(s))
-                                return true;
-                return false;
+        // private boolean contieneSinonimo(String mensaje, String sinonimo) {
+        // // Dividimos el mensaje en palabras
+        // String[] palabras = mensaje.split("\\s+");
+        // for (String palabra : palabras) {
+        // // Si la palabra es muy parecida al sinónimo, lo consideramos coincidencia
+        // if (similaridad(palabra, sinonimo) >= 0.8) { // 80% de parecido
+        // return true;
+        // }
+        // }
+        // return false;
+        // }
+
+        // private double similaridad(String a, String b) {
+        // int distancia = calcularDistanciaLevenshtein(a, b);
+        // int longitudMax = Math.max(a.length(), b.length());
+        // return 1.0 - ((double) distancia / longitudMax);
+        // }
+
+        private int calcularDistanciaLevenshtein(String a, String b) {
+
+                int[][] dp = new int[a.length() + 1][b.length() + 1];
+
+                for (int i = 0; i <= a.length(); i++)
+                        dp[i][0] = i;
+                for (int j = 0; j <= b.length(); j++)
+                        dp[0][j] = j;
+
+                for (int i = 1; i <= a.length(); i++) {
+                        for (int j = 1; j <= b.length(); j++) {
+                                int costo = (a.charAt(i - 1) == b.charAt(j - 1)) ? 0 : 1;
+                                dp[i][j] = Math.min(
+                                                Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1),
+                                                dp[i - 1][j - 1] + costo);
+                        }
+                }
+
+                return dp[a.length()][b.length()];
         }
 
-        private boolean contienePatron(String texto, String... patrones) {
-                for (String p : patrones)
-                        if (Pattern.compile(p).matcher(texto).find())
-                                return true;
-                return false;
-        }
+        // private boolean contienePatron(String texto, String... patrones) {
+        // for (String p : patrones)
+        // if (Pattern.compile(p).matcher(texto).find())
+        // return true;
+        // return false;
+        // }
 
-        private String normalizarTexto(String texto) {
-                return Normalizer.normalize(texto, Normalizer.Form.NFD)
-                                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                                .toLowerCase()
-                                .replaceAll("[^a-zñáéíóúü0-9 ]", " ")
-                                .replaceAll("\\s+", " ").trim();
-        }
-
-        private String limpiarRuido(String texto) {
-                String[] ruido = {
-                                "un", "una", "unos", "unas", "el", "la", "los", "las",
-                                "por", "favor", "porfa", "de", "del", "a", "al", "me", "mi", "mis", "tu", "tus",
-                                "su", "sus", "quiero", "necesito", "deseo", "puedo", "podrías", "podrias",
-                                "con", "sin", "sobre", "bajo", "entre", "hacia", "hasta"
-                };
-                for (String palabra : ruido)
-                        texto = texto.replaceAll("\\b" + palabra + "\\b", "");
-                return texto.replaceAll("\\s+", " ").trim();
-        }
+        // private String limpiarRuido(String texto) {
+        // String[] ruido = {
+        // "un", "una", "unos", "unas", "el", "la", "los", "las",
+        // "por", "favor", "porfa", "de", "del", "a", "al", "me", "mi", "mis", "tu",
+        // "tus",
+        // "su", "sus", "quiero", "necesito", "deseo", "puedo", "podrías", "podrias",
+        // "con", "sin", "sobre", "bajo", "entre", "hacia", "hasta"
+        // };
+        // for (String palabra : ruido)
+        // texto = texto.replaceAll("\\b" + palabra + "\\b", "");
+        // return texto.replaceAll("\\s+", " ").trim();
+        // }
 
         // ============================================================
         // 🔹 UTILIDADES DE RESPUESTA

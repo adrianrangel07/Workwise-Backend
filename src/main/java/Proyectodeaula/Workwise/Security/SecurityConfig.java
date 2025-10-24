@@ -47,6 +47,8 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/ofertas/home").permitAll() //personas invitado
 
+                        .requestMatchers("/error").permitAll()
+
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
 
                         .requestMatchers("/api/empresas/ofertas").hasAuthority("ROLE_EMPRESA")
@@ -74,7 +76,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://127.0.0.1:5500","https://demonstrably-awnless-theo.ngrok-free.dev"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*")); // 🔑 permitir todos
         configuration.setAllowCredentials(true);

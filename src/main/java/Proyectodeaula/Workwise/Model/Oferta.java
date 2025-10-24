@@ -29,8 +29,8 @@ public class Oferta {
     private String titulo;
     @Column(name = "descripcion", columnDefinition = "text", nullable = false)
     private String descripcion;
-    @Column(name = "requisitos", columnDefinition = "text", nullable = false)
-    private String requisitos;
+    @Column(name = "competencias", columnDefinition = "text", nullable = false)
+    private String competencias;
     @Column(name = "salario", columnDefinition = "int", nullable = false)
     private int salario;
     @Column(name = "moneda", columnDefinition = "varchar(50)", nullable = false)
@@ -39,6 +39,8 @@ public class Oferta {
     private String ubicacion;
     @Column(name = "tipo_Contrato", columnDefinition = "varchar(50)", nullable = false)
     private String tipo_Contrato;
+    @Column(name = "tipo_Empleo", columnDefinition = "varchar(50)", nullable = false)
+    private String tipo_Empleo;
     @Column(name = "modalidad", columnDefinition = "varchar(50)", nullable = false)
     private String modalidad;
     @Column(name = "fecha_Publicacion", columnDefinition = "Date", nullable = false)
