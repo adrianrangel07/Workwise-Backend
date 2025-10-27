@@ -69,7 +69,6 @@ public class PostulacionController {
             String correoUsuario = authentication.getName();
             Optional<Persona> personaOpt = personaRepository.findOptionalByEmail(correoUsuario);
 
-
             if (personaOpt.isEmpty()) {
                 response.put("success", false);
                 response.put("message", "Usuario no encontrado.");
@@ -79,7 +78,8 @@ public class PostulacionController {
             Persona persona = personaOpt.get();
 
             // Verificar si ya está postulado
-            Optional<Postulacion> existente = postulacionRepository.findByOfertaIdAndPersonaId(ofertaId, persona.getId());
+            Optional<Postulacion> existente = postulacionRepository.findByOfertaIdAndPersonaId(ofertaId,
+                    persona.getId());
             if (existente.isPresent()) {
                 response.put("success", false);
                 response.put("message", "Ya estás postulado a esta oferta.");
@@ -143,7 +143,8 @@ public class PostulacionController {
     @GetMapping("/ofertas/{id}")
     public ResponseEntity<List<Map<String, Object>>> obtenerPostulacionesPorOferta(@PathVariable Long id) {
         List<Postulacion> postulaciones = postulacionRepository.findByOfertaId(id);
-        if (postulaciones.isEmpty()) return ResponseEntity.ok(Collections.emptyList());
+        if (postulaciones.isEmpty())
+            return ResponseEntity.ok(Collections.emptyList());
 
         List<Map<String, Object>> resultado = postulaciones.stream()
                 .filter(p -> p.getPersona() != null)
@@ -220,5 +221,59 @@ public class PostulacionController {
         response.put("estado", nuevoEstado);
         return ResponseEntity.ok(response);
     }
-}
 
+    /**
+     * GET /api/postulaciones/mis-postulaciones
+     * Permite a una persona ver sus propias postulaciones.
+     */
+    @PreAuthorize("hasRole('PERSONA')")
+    @GetMapping("/mis-postulaciones")
+    public ResponseEntity<List<Map<String, Object>>> obtenerMisPostulaciones(Authentication authentication) {
+        String correoUsuario = authentication.getName();
+        Optional<Persona> personaOpt = personaRepository.findOptionalByEmail(correoUsuario);
+
+        if (personaOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Persona persona = personaOpt.get();
+        List<Postulacion> postulaciones = postulacionRepository.findByPersonaId(persona.getId());
+
+        List<Map<String, Object>> resultado = postulaciones.stream()
+                .map(p -> {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("postulacionId", p.getId());
+                    data.put("estado", p.getEstado());
+                    data.put("fecha", p.getFecha_postulacion());
+
+                    Oferta oferta = p.getOferta();
+                    Map<String, Object> ofertaData = new HashMap<>();
+
+                    ofertaData.put("id", oferta.getId());
+                    ofertaData.put("titulo", oferta.getTitulo());
+                    ofertaData.put("descripcion", oferta.getDescripcion());
+                    ofertaData.put("competencias", oferta.getCompetencias());
+                    ofertaData.put("salario", oferta.getSalario());
+                    ofertaData.put("moneda", oferta.getMoneda());
+                    ofertaData.put("ubicacion", oferta.getUbicacion());
+                    ofertaData.put("tipoContrato", oferta.getTipo_Contrato());
+                    ofertaData.put("tipoEmpleo", oferta.getTipo_Empleo());
+                    ofertaData.put("modalidad", oferta.getModalidad());
+                    ofertaData.put("fechaPublicacion", oferta.getFecha_Publicacion());
+                    ofertaData.put("fechaCierre", oferta.getFecha_Cierre());
+                    ofertaData.put("sectorOferta", oferta.getSector_oferta());
+                    ofertaData.put("experiencia", oferta.getExperiencia());
+                    ofertaData.put("nivelEducacion", oferta.getNivel_Educacion());
+                    ofertaData.put("activo", oferta.isActivo());
+                    ofertaData.put("empresa", oferta.getEmpresa().getNombre());
+
+                    data.put("oferta", ofertaData);
+
+                    return data;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(resultado);
+    }
+
+}

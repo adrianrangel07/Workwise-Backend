@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import Proyectodeaula.Workwise.Model.CategoriaProfesional;
+import Proyectodeaula.Workwise.Model.Dto.OfertaPublicaDTO;
 import Proyectodeaula.Workwise.Model.Oferta;
 import Proyectodeaula.Workwise.Model.Persona;
-import Proyectodeaula.Workwise.Model.Dto.OfertaPublicaDTO;
 import Proyectodeaula.Workwise.Repository.Oferta.OfertaRepository;
 import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;
 import Proyectodeaula.Workwise.Service.Ofertas.OfertaService;
@@ -71,6 +72,7 @@ public class OfertaController {
     }
 
     // ✅ Listar ofertas por empresa
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @GetMapping("/empresa/{empresaId}")
     public ResponseEntity<List<Oferta>> listarPorEmpresa(@PathVariable Long empresaId) {
         return ResponseEntity.ok(ofertaService.listarPorEmpresa(empresaId));

@@ -453,23 +453,6 @@ public class ChatbotService {
         // ============================================================
         // 🔹 UTILIDADES DE DETECCIÓN
         // ============================================================
-        // private boolean contieneSinonimo(String mensaje, String sinonimo) {
-        // // Dividimos el mensaje en palabras
-        // String[] palabras = mensaje.split("\\s+");
-        // for (String palabra : palabras) {
-        // // Si la palabra es muy parecida al sinónimo, lo consideramos coincidencia
-        // if (similaridad(palabra, sinonimo) >= 0.8) { // 80% de parecido
-        // return true;
-        // }
-        // }
-        // return false;
-        // }
-
-        // private double similaridad(String a, String b) {
-        // int distancia = calcularDistanciaLevenshtein(a, b);
-        // int longitudMax = Math.max(a.length(), b.length());
-        // return 1.0 - ((double) distancia / longitudMax);
-        // }
 
         private int calcularDistanciaLevenshtein(String a, String b) {
 
@@ -491,26 +474,6 @@ public class ChatbotService {
 
                 return dp[a.length()][b.length()];
         }
-
-        // private boolean contienePatron(String texto, String... patrones) {
-        // for (String p : patrones)
-        // if (Pattern.compile(p).matcher(texto).find())
-        // return true;
-        // return false;
-        // }
-
-        // private String limpiarRuido(String texto) {
-        // String[] ruido = {
-        // "un", "una", "unos", "unas", "el", "la", "los", "las",
-        // "por", "favor", "porfa", "de", "del", "a", "al", "me", "mi", "mis", "tu",
-        // "tus",
-        // "su", "sus", "quiero", "necesito", "deseo", "puedo", "podrías", "podrias",
-        // "con", "sin", "sobre", "bajo", "entre", "hacia", "hasta"
-        // };
-        // for (String palabra : ruido)
-        // texto = texto.replaceAll("\\b" + palabra + "\\b", "");
-        // return texto.replaceAll("\\s+", " ").trim();
-        // }
 
         // ============================================================
         // 🔹 UTILIDADES DE RESPUESTA
