@@ -29,4 +29,3 @@ public class Usuario {
     @Column(name = "rol", columnDefinition = "varchar(50)", nullable = false)
     private String rol;
 }
-

@@ -63,6 +63,7 @@ public class OfertaController {
     }
 
     // ✅ Eliminar oferta
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarOferta(@PathVariable Long id) {
         if (ofertaService.eliminar(id)) {
@@ -72,13 +73,13 @@ public class OfertaController {
     }
 
     // ✅ Listar ofertas por empresa
-    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @GetMapping("/empresa/{empresaId}")
     public ResponseEntity<List<Oferta>> listarPorEmpresa(@PathVariable Long empresaId) {
         return ResponseEntity.ok(ofertaService.listarPorEmpresa(empresaId));
     }
 
     // ✅ Cambiar estado activo/inactivo
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @PutMapping("/{id}/toggle")
     public ResponseEntity<Oferta> toggleActivo(@PathVariable Long id) {
         Optional<Oferta> oferta = ofertaService.toggleActivo(id);
@@ -98,7 +99,7 @@ public class OfertaController {
         // Convertir cada oferta a DTO
         List<OfertaPublicaDTO> ofertasDTO = ofertas.stream()
                 .map(OfertaPublicaDTO::new)
-                .toList(); // o .collect(Collectors.toList()) si usas Java <16
+                .toList();
 
         return ResponseEntity.ok(ofertasDTO);
     }
