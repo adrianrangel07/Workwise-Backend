@@ -76,7 +76,6 @@ public class OfertaService implements IofertaService {
         return ofertaRepository.findById(id).map(oferta -> {
             oferta.setTitulo(ofertaActualizada.getTitulo());
             oferta.setDescripcion(ofertaActualizada.getDescripcion());
-            oferta.setCompetencias(ofertaActualizada.getCompetencias());
             oferta.setSalario(ofertaActualizada.getSalario());
             oferta.setMoneda(ofertaActualizada.getMoneda());
             oferta.setUbicacion(ofertaActualizada.getUbicacion());

@@ -1,7 +1,10 @@
 package Proyectodeaula.Workwise.Model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,8 +33,6 @@ public class Oferta {
     private String titulo;
     @Column(name = "descripcion", columnDefinition = "text", nullable = false)
     private String descripcion;
-    @Column(name = "competencias", columnDefinition = "text", nullable = false)
-    private String competencias;
     @Column(name = "salario", columnDefinition = "int", nullable = false)
     private int salario;
     @Column(name = "moneda", columnDefinition = "varchar(50)", nullable = false)
@@ -63,5 +65,8 @@ public class Oferta {
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private CategoriaProfesional categoria;
+
+    @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OfertaHabilidad> habilidades = new ArrayList<>();
 
 }

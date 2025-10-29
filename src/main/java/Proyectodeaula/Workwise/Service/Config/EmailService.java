@@ -35,7 +35,7 @@ public class EmailService {
 
                   <!-- HEADER -->
                   <div style="background: linear-gradient(135deg, #2f80ed, #1c5fbf); text-align: center; padding: 25px;">
-                    <img src='%s' alt="Workwise" style="max-height: 60px; margin-bottom: 10px;" />
+
                     <h2 style="color: white; margin: 0;">Verificación de correo</h2>
                   </div>
 

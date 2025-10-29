@@ -1,25 +1,36 @@
 package Proyectodeaula.Workwise.Controller.OfertasController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import Proyectodeaula.Workwise.Model.CategoriaProfesional;
 import Proyectodeaula.Workwise.Model.Dto.OfertaPublicaDTO;
+import Proyectodeaula.Workwise.Model.Empresa;
+import Proyectodeaula.Workwise.Model.Habilidad;
 import Proyectodeaula.Workwise.Model.Oferta;
+import Proyectodeaula.Workwise.Model.OfertaHabilidad;
+import Proyectodeaula.Workwise.Model.OfertaHabilidadId;
 import Proyectodeaula.Workwise.Model.Persona;
+import Proyectodeaula.Workwise.Repository.Oferta.OfertaHabilidadRepository;
 import Proyectodeaula.Workwise.Repository.Oferta.OfertaRepository;
+import Proyectodeaula.Workwise.Repository.Persona.HabilidadRepository;
 import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;
+import Proyectodeaula.Workwise.Security.Token.JwtUtil;
 import Proyectodeaula.Workwise.Service.Ofertas.OfertaService;
 
 @RestController
@@ -34,6 +45,15 @@ public class OfertaController {
 
     @Autowired
     private Repository_Persona personaRepository;
+
+    @Autowired
+    private HabilidadRepository habilidadRepository;
+
+    @Autowired
+    private OfertaHabilidadRepository ofertaHabilidadRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     // ✅ Listar todas las ofertas activas
     @GetMapping
@@ -103,5 +123,95 @@ public class OfertaController {
 
         return ResponseEntity.ok(ofertasDTO);
     }
+    
+    /**
+     * Agrega una habilidad a una oferta específica
+     */
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
+    @PostMapping("/{id}/habilidades")
+    public ResponseEntity<?> agregarHabilidadAOferta(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
 
+        String email = jwtUtil.extractEmailFromHeader(authHeader);
+        Oferta oferta = ofertaRepository.findById(id).orElse(null);
+
+        if (oferta == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La oferta no existe");
+
+        // ✅ Validar que la empresa dueña de la oferta es la que está autenticada
+        Empresa empresa = oferta.getEmpresa();
+        if (!empresa.getUsuario().getEmail().equals(email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No puedes modificar ofertas de otra empresa");
+        }
+
+        String nombreHabilidad = body.get("nombre");
+        if (nombreHabilidad == null || nombreHabilidad.isBlank())
+            return ResponseEntity.badRequest().body("El nombre de la habilidad no puede estar vacío");
+
+        // Buscar o crear la habilidad
+        Habilidad habilidad = habilidadRepository.findByNombreIgnoreCase(nombreHabilidad)
+                .orElseGet(() -> habilidadRepository.save(new Habilidad(null, nombreHabilidad)));
+
+        // Verificar si ya existe la relación
+        boolean yaExiste = oferta.getHabilidades().stream()
+                .anyMatch(oh -> oh.getHabilidad().getId().equals(habilidad.getId()));
+        if (yaExiste)
+            return ResponseEntity.badRequest().body("La habilidad ya está asociada a esta oferta");
+
+        // Asociar
+        OfertaHabilidad oh = new OfertaHabilidad(oferta, habilidad);
+        oferta.getHabilidades().add(oh);
+        ofertaRepository.save(oferta);
+
+        return ResponseEntity.ok("Habilidad agregada exitosamente a la oferta");
+    }
+
+    /**
+     * Listar habilidades de una oferta
+     */
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
+    @GetMapping("/{id}/habilidades")
+    public ResponseEntity<?> listarHabilidadesDeOferta(@PathVariable Long id) {
+        Oferta oferta = ofertaRepository.findById(id).orElse(null);
+        if (oferta == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La oferta no existe");
+
+        var habilidades = ofertaHabilidadRepository.findByOferta(oferta)
+                .stream()
+                .map(oh -> Map.of("id", oh.getHabilidad().getId(), "nombre", oh.getHabilidad().getNombre()))
+                .toList();
+
+        return ResponseEntity.ok(habilidades);
+    }
+
+    /**
+     * Eliminar una habilidad de una oferta
+     */
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
+    @DeleteMapping("/{id}/habilidades/{habilidadId}")
+    public ResponseEntity<?> eliminarHabilidadDeOferta(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long id,
+            @PathVariable Long habilidadId) {
+
+        String email = jwtUtil.extractEmailFromHeader(authHeader);
+        Oferta oferta = ofertaRepository.findById(id).orElse(null);
+
+        if (oferta == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La oferta no existe");
+
+        Empresa empresa = oferta.getEmpresa();
+        if (!empresa.getUsuario().getEmail().equals(email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No puedes modificar ofertas de otra empresa");
+        }
+
+        OfertaHabilidadId ohId = new OfertaHabilidadId(oferta.getId(), habilidadId);
+        if (!ofertaHabilidadRepository.existsById(ohId))
+            return ResponseEntity.badRequest().body("Esta habilidad no está asociada a la oferta");
+
+        ofertaHabilidadRepository.deleteById(ohId);
+        return ResponseEntity.ok("Habilidad eliminada exitosamente de la oferta");
+    }
 }

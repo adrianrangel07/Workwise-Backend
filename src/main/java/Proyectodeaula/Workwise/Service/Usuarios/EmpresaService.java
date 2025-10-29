@@ -84,7 +84,7 @@ public class EmpresaService implements IempresaService {
         // Actualiza campos
         emp.setNombre(empresa.getNombre());
         emp.setDireccion(empresa.getDireccion());
-        emp.setRazon_Social(empresa.getRazon_Social());
+        emp.setRazonSocial(empresa.getRazonSocial());
         emp.setDescripcion(empresa.getDescripcion());
         emp.setSector(empresa.getSector());
         emp.setTelefono(empresa.getTelefono());

@@ -35,10 +35,10 @@ public class Empresa {
     private String nombre;
     @Column(name = "direccion", columnDefinition = "varchar(100)", nullable = false)
     private String direccion;
-    @Column(name = "Razon_Social", columnDefinition = "varchar(100)", nullable = false)
-    private String Razon_Social;
+    @Column(name = "razon_social", columnDefinition = "varchar(100)", nullable = false)
+    private String razonSocial;
     @Column(name = "nit", columnDefinition = "varchar(20)", nullable = false)
-    private int nit;
+    private String nit;
     @Column(name = "telefono", columnDefinition = "varchar(20)", nullable = false)
     private String telefono;
     @Column(name = "tipo_telefono", columnDefinition = "varchar(20)", nullable = false)

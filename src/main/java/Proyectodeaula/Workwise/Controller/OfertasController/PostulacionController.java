@@ -252,7 +252,6 @@ public class PostulacionController {
                     ofertaData.put("id", oferta.getId());
                     ofertaData.put("titulo", oferta.getTitulo());
                     ofertaData.put("descripcion", oferta.getDescripcion());
-                    ofertaData.put("competencias", oferta.getCompetencias());
                     ofertaData.put("salario", oferta.getSalario());
                     ofertaData.put("moneda", oferta.getMoneda());
                     ofertaData.put("ubicacion", oferta.getUbicacion());

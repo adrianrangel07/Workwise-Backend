@@ -1,6 +1,7 @@
 package Proyectodeaula.Workwise.Controller.UsuarioController;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,10 +33,13 @@ import org.springframework.web.multipart.MultipartFile;
 import Proyectodeaula.Workwise.Model.CategoriaProfesional;
 import Proyectodeaula.Workwise.Model.Dto.VerificarPasswordDTO;
 import Proyectodeaula.Workwise.Model.Empresa;
+import Proyectodeaula.Workwise.Model.Habilidad;
 import Proyectodeaula.Workwise.Model.Oferta;
+import Proyectodeaula.Workwise.Model.OfertaHabilidad;
 import Proyectodeaula.Workwise.Model.Usuario;
 import Proyectodeaula.Workwise.Repository.Empresa.Crud_Emp;
 import Proyectodeaula.Workwise.Repository.Empresa.Repository_Emp;
+import Proyectodeaula.Workwise.Repository.Persona.HabilidadRepository;
 import Proyectodeaula.Workwise.RepositoryService.Ofertas.IofertaService;
 import Proyectodeaula.Workwise.Security.Token.JwtUtil;
 import Proyectodeaula.Workwise.Service.Usuarios.ClasificacionProfesionalService;
@@ -65,10 +70,16 @@ public class EmpresaController {
     private ClasificacionProfesionalService clasificacionService;
 
     @Autowired
+    private HabilidadRepository habilidadRepository;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     // ==================== REGISTRO ====================
+
+    // registrar empresa
     @PostMapping("/registrar")
+    @SuppressWarnings("CallToPrintStackTrace")
     public ResponseEntity<?> registrarEmpresa(@RequestBody Empresa empresa) {
         try {
             if (empresa.getUsuario() == null || empresa.getUsuario().getPassword().isBlank()) {
@@ -81,11 +92,16 @@ public class EmpresaController {
             Empresa saved = empresaRepository.save(empresa);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al registrar empresa");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al registrar empresa: " + e.getClass().getSimpleName() + " - " + e.getMessage());
         }
+
     }
 
     // ==================== LOGIN ====================
+
+    // inicio de sesion de empresa
     @PostMapping("/login")
     public ResponseEntity<?> loginEmpresa(@RequestBody Map<String, String> loginData) {
         String email = loginData.get("email");
@@ -110,6 +126,7 @@ public class EmpresaController {
     }
 
     // ==================== PERFIL ====================
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @GetMapping("/perfil")
     public ResponseEntity<?> obtenerPerfil(@RequestHeader("Authorization") String authHeader) {
         String email = jwtUtil.extractEmailFromHeader(authHeader);
@@ -121,6 +138,7 @@ public class EmpresaController {
         return ResponseEntity.ok(empresa);
     }
 
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @PutMapping("/perfil")
     public ResponseEntity<?> actualizarPerfil(@RequestHeader("Authorization") String authHeader,
             @RequestBody Empresa datos) {
@@ -135,8 +153,8 @@ public class EmpresaController {
             empresa.setNombre(datos.getNombre());
         if (datos.getDireccion() != null)
             empresa.setDireccion(datos.getDireccion());
-        if (datos.getRazon_Social() != null)
-            empresa.setRazon_Social(datos.getRazon_Social());
+        if (datos.getRazonSocial() != null)
+            empresa.setRazonSocial(datos.getRazonSocial());
         if (datos.getDescripcion() != null)
             empresa.setDescripcion(datos.getDescripcion());
         if (datos.getSector() != null)
@@ -145,7 +163,7 @@ public class EmpresaController {
             empresa.setTelefono(datos.getTelefono());
         if (datos.getTipo_telefono() != null)
             empresa.setTipo_telefono(datos.getTipo_telefono());
-        if (datos.getNit() != 0)
+        if (datos.getNit() != null && !datos.getNit().isBlank())
             empresa.setNit(datos.getNit());
         if (datos.getPhoto() != null)
             empresa.setPhoto(datos.getPhoto());
@@ -159,6 +177,7 @@ public class EmpresaController {
     }
 
     // ==================== FOTO ====================
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @PostMapping("/foto")
     public ResponseEntity<?> subirFoto(@RequestHeader("Authorization") String authHeader,
             @RequestParam("file") MultipartFile file) {
@@ -178,6 +197,7 @@ public class EmpresaController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @GetMapping("/foto/{id}")
     public ResponseEntity<byte[]> obtenerFoto(@PathVariable Long id) {
         Optional<Empresa> empresa = uEmp.findById(id);
@@ -191,7 +211,10 @@ public class EmpresaController {
     }
 
     // ==================== OFERTAS ====================
+
+    // listar ofertas por empresa con paginación
     @GetMapping("/ofertas")
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     public ResponseEntity<?> listarOfertasEmpresa(@RequestHeader("Authorization") String authHeader,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size) {
@@ -206,7 +229,83 @@ public class EmpresaController {
         return ResponseEntity.ok(ofertasPage);
     }
 
+    // crear oferta por empresa
+    @PostMapping("/ofertas")
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
+    @SuppressWarnings("CallToPrintStackTrace")
+    public ResponseEntity<?> crearOfertaEmpresa(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody Map<String, Object> body) {
+        try {
+            // 🔹 Extraer email del token
+            String email = jwtUtil.extractEmailFromHeader(authHeader);
+            Empresa empresa = uEmp.findByEmail(email);
+
+            if (empresa == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Token inválido o usuario no encontrado");
+            }
+
+            // 🔹 Crear nueva oferta
+            Oferta oferta = new Oferta();
+            oferta.setTitulo((String) body.get("titulo"));
+            oferta.setDescripcion((String) body.get("descripcion"));
+            oferta.setSalario((Integer) body.get("salario"));
+            oferta.setMoneda((String) body.get("moneda"));
+            oferta.setUbicacion((String) body.get("ubicacion"));
+            oferta.setTipo_Contrato((String) body.get("tipo_Contrato"));
+            oferta.setTipo_Empleo((String) body.get("tipo_Empleo"));
+            oferta.setModalidad((String) body.get("modalidad"));
+            oferta.setFecha_Publicacion(LocalDate.now());
+            oferta.setFecha_Cierre(LocalDate.parse((String) body.get("fecha_Cierre")));
+            oferta.setSector_oferta((String) body.get("sector_oferta"));
+            oferta.setExperiencia((Integer) body.get("experiencia"));
+            oferta.setNivel_Educacion((String) body.get("nivel_Educacion"));
+            oferta.setActivo(true);
+            oferta.setEmpresa(empresa);
+
+            // 🔹 Clasificar automáticamente según el título
+            CategoriaProfesional categoria = clasificacionService.obtenerCategoriaPorProfesion(oferta.getTitulo());
+            oferta.setCategoria(categoria);
+
+            // 🔹 Guardar oferta inicialmente para obtener su ID
+            oferta = ofertaService.guardar(oferta);
+
+            // 🔹 Procesar habilidades si se incluyen en el JSON
+            if (body.containsKey("habilidades")) {
+                @SuppressWarnings("unchecked")
+                List<String> habilidades = (List<String>) body.get("habilidades");
+
+                for (String nombreHab : habilidades) {
+                    if (nombreHab == null || nombreHab.isBlank())
+                        continue;
+
+                    // Buscar o crear la habilidad
+                    Habilidad habilidad = habilidadRepository.findByNombreIgnoreCase(nombreHab)
+                            .orElseGet(() -> habilidadRepository.save(new Habilidad(null, nombreHab)));
+
+                    // Asociar la habilidad con la oferta
+                    OfertaHabilidad oh = new OfertaHabilidad(oferta, habilidad);
+                    oferta.getHabilidades().add(oh);
+                }
+
+                ofertaService.guardar(oferta);
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of(
+                            "mensaje", "Oferta creada correctamente con habilidades",
+                            "ofertaId", oferta.getId()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al crear oferta: " + e.getMessage());
+        }
+    }
+
     // ==================== CONTRASEÑA ====================
+
     @PostMapping("/verificar-contrasena")
     public ResponseEntity<Map<String, Object>> verificarContrasena(@RequestBody VerificarPasswordDTO dto) {
         Empresa empresa = uEmp.findByEmail(dto.getEmail());
@@ -260,6 +359,7 @@ public class EmpresaController {
     }
 
     // ==================== ELIMINAR CUENTA ====================
+    @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @DeleteMapping("/eliminar")
     public ResponseEntity<?> eliminarCuenta(@RequestHeader("Authorization") String authHeader,
             @RequestBody Map<String, String> requestData) {
@@ -289,36 +389,6 @@ public class EmpresaController {
         } catch (Exception e) {
             logger.error("Error al eliminar cuenta", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la cuenta");
-        }
-    }
-
-    @PostMapping("/ofertas")
-    public ResponseEntity<?> crearOfertaEmpresa(@RequestHeader("Authorization") String authHeader,
-            @RequestBody Oferta oferta) {
-        try {
-            // Extraer email del token
-            String email = jwtUtil.extractEmailFromHeader(authHeader);
-            Empresa empresa = uEmp.findByEmail(email);
-
-            if (empresa == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Token inválido o usuario no encontrado");
-            }
-
-            // Asignar empresa
-            oferta.setEmpresa(empresa);
-
-            //Clasificar automáticamente según el título de la oferta
-            CategoriaProfesional categoria = clasificacionService.obtenerCategoriaPorProfesion(oferta.getTitulo());
-            oferta.setCategoria(categoria);
-
-            // Guardar oferta
-            Oferta nueva = ofertaService.guardar(oferta);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear oferta: " + e.getMessage());
         }
     }
 
