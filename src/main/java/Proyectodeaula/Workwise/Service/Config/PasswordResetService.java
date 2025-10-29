@@ -1,7 +1,8 @@
 package Proyectodeaula.Workwise.Service.Config;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.List;
 
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -29,20 +30,37 @@ public class PasswordResetService {
     private final Repository_Persona personaRepository;
     private final Repository_Emp empresaRepository;
 
+    private static final SecureRandom secureRandom = new SecureRandom();
+
+    // Generar código numérico seguro de N dígitos
+    private String generateNumericCode(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(secureRandom.nextInt(10));
+        }
+        return sb.toString();
+    }
+
     public void sendPasswordResetToken(String email) {
         // Validar que el correo exista
-        boolean exists = personaRepository.findByEmail(email).isActivo() ||
-                empresaRepository.findByEmail(email).isActivo();
+        boolean exists = (personaRepository.findByEmail(email) != null
+                && personaRepository.findByEmail(email).isActivo()) ||
+                (empresaRepository.findByEmail(email) != null && empresaRepository.findByEmail(email).isActivo());
+
         if (!exists) {
             throw new RuntimeException("No existe usuario o empresa con ese correo");
         }
 
-        // Generar token
-        String token = UUID.randomUUID().toString();
+        // Generar código de 6 dígitos
+        String rawCode = generateNumericCode(6);
+        String hashedCode = passwordEncoder.encode(rawCode);
+
+        // Guardar token con hash
         PasswordResetToken resetToken = new PasswordResetToken();
         resetToken.setEmail(email);
-        resetToken.setToken(token);
+        resetToken.setToken(hashedCode);
         resetToken.setExpirationDate(LocalDateTime.now().plusMinutes(15));
+        resetToken.setUsed(false);
         tokenRepository.save(resetToken);
 
         try {
@@ -57,12 +75,10 @@ public class PasswordResetService {
                             <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f5f7fa; padding: 40px;">
                                 <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 16px; box-shadow: 0 0 20px rgba(0,0,0,0.05); overflow: hidden;">
 
-                                    <!-- HEADER -->
                                     <div style="background: linear-gradient(135deg, #2f80ed, #1c5fbf); text-align: center; padding: 25px;">
                                         <h2 style="color: white; margin: 0;">Recuperación de contraseña</h2>
                                     </div>
 
-                                    <!-- CONTENIDO -->
                                     <div style="padding: 35px; text-align: center;">
                                         <p style="font-size: 16px; color: #333;">Hola 👋,</p>
                                         <p style="font-size: 15px; color: #555; margin: 15px 0;">
@@ -86,7 +102,7 @@ public class PasswordResetService {
                                 </div>
                             </div>
                             """,
-                    token);
+                    rawCode);
 
             helper.setText(htmlContent, true);
             mailSender.send(message);
@@ -96,16 +112,25 @@ public class PasswordResetService {
         }
     }
 
-    public void resetPassword(String email, String token, String newPassword) {
-        // Validar token
-        PasswordResetToken resetToken = tokenRepository.findByEmailAndToken(email, token)
-                .orElseThrow(() -> new RuntimeException("Token inválido"));
-
-        if (resetToken.isExpired() || resetToken.isUsed()) {
-            throw new RuntimeException("Token expirado o ya usado");
+    public void resetPassword(String email, String rawCode, String newPassword) {
+        // Obtener tokens no usados y ordenados por fecha descendente
+        List<PasswordResetToken> tokens = tokenRepository.findByEmailAndUsedFalseOrderByExpirationDateDesc(email);
+        if (tokens.isEmpty()) {
+            throw new RuntimeException("Token inválido");
         }
 
-        // Buscar Usuario a través de Persona o Empresa
+        PasswordResetToken resetToken = tokens.get(0);
+
+        if (resetToken.isExpired()) {
+            throw new RuntimeException("Token expirado");
+        }
+
+        // Verificar código con hash
+        if (!passwordEncoder.matches(rawCode, resetToken.getToken())) {
+            throw new RuntimeException("Token inválido");
+        }
+
+        // Actualizar contraseña en Usuario
         Persona persona = personaRepository.findByEmail(email);
         if (persona != null) {
             persona.getUsuario().setPassword(passwordEncoder.encode(newPassword));
@@ -124,5 +149,4 @@ public class PasswordResetService {
         resetToken.setUsed(true);
         tokenRepository.save(resetToken);
     }
-
 }
