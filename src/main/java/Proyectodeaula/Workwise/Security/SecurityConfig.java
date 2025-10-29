@@ -45,7 +45,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/empresas/login", "/api/empresas/registrar").permitAll()  //empresas
 
-                        .requestMatchers("/api/ofertas/home").permitAll() //personas invitado
+                        .requestMatchers("/api/ofertas/home","/api/auth/**").permitAll() //personas invitado
 
                         .requestMatchers("/error").permitAll()
 

@@ -1,0 +1,128 @@
+package Proyectodeaula.Workwise.Service.Config;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import org.springframework.mail.MailException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import Proyectodeaula.Workwise.Model.Empresa;
+import Proyectodeaula.Workwise.Model.PasswordResetToken;
+import Proyectodeaula.Workwise.Model.Persona;
+import Proyectodeaula.Workwise.Repository.Empresa.Repository_Emp;
+import Proyectodeaula.Workwise.Repository.General.PasswordResetTokenRepository;
+import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import lombok.AllArgsConstructor;
+
+@Service
+@AllArgsConstructor
+public class PasswordResetService {
+
+    private final PasswordResetTokenRepository tokenRepository;
+    private final JavaMailSender mailSender;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final Repository_Persona personaRepository;
+    private final Repository_Emp empresaRepository;
+
+    public void sendPasswordResetToken(String email) {
+        // Validar que el correo exista
+        boolean exists = personaRepository.findByEmail(email).isActivo() ||
+                empresaRepository.findByEmail(email).isActivo();
+        if (!exists) {
+            throw new RuntimeException("No existe usuario o empresa con ese correo");
+        }
+
+        // Generar token
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setEmail(email);
+        resetToken.setToken(token);
+        resetToken.setExpirationDate(LocalDateTime.now().plusMinutes(15));
+        tokenRepository.save(resetToken);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(email);
+            helper.setSubject("Recuperación de contraseña - Workwise");
+
+            String htmlContent = String.format(
+                    """
+                            <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f5f7fa; padding: 40px;">
+                                <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 16px; box-shadow: 0 0 20px rgba(0,0,0,0.05); overflow: hidden;">
+
+                                    <!-- HEADER -->
+                                    <div style="background: linear-gradient(135deg, #2f80ed, #1c5fbf); text-align: center; padding: 25px;">
+                                        <h2 style="color: white; margin: 0;">Recuperación de contraseña</h2>
+                                    </div>
+
+                                    <!-- CONTENIDO -->
+                                    <div style="padding: 35px; text-align: center;">
+                                        <p style="font-size: 16px; color: #333;">Hola 👋,</p>
+                                        <p style="font-size: 15px; color: #555; margin: 15px 0;">
+                                            Solicitaste recuperar tu contraseña en <strong>Workwise</strong>.<br>
+                                            Usa el siguiente código para restablecer tu contraseña. Este código expirará en 15 minutos.
+                                        </p>
+
+                                        <div style="margin: 25px 0;">
+                                            <span style="font-size: 28px; font-weight: bold; letter-spacing: 3px; color: #224abe; background: #eef2ff; padding: 12px 24px; border-radius: 10px; display: inline-block;">
+                                                %s
+                                            </span>
+                                        </div>
+
+                                        <hr style="margin: 35px 0; border: none; border-top: 1px solid #eee;">
+
+                                        <p style="font-size: 12px; color: #999;">
+                                            © 2025 Workwise. Todos los derechos reservados.<br>
+                                            Este correo fue enviado automáticamente, por favor no respondas.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            """,
+                    token);
+
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+
+        } catch (MessagingException | MailException e) {
+            System.err.println("❌ Error al enviar correo: " + e.getMessage());
+        }
+    }
+
+    public void resetPassword(String email, String token, String newPassword) {
+        // Validar token
+        PasswordResetToken resetToken = tokenRepository.findByEmailAndToken(email, token)
+                .orElseThrow(() -> new RuntimeException("Token inválido"));
+
+        if (resetToken.isExpired() || resetToken.isUsed()) {
+            throw new RuntimeException("Token expirado o ya usado");
+        }
+
+        // Buscar Usuario a través de Persona o Empresa
+        Persona persona = personaRepository.findByEmail(email);
+        if (persona != null) {
+            persona.getUsuario().setPassword(passwordEncoder.encode(newPassword));
+            personaRepository.save(persona);
+        } else {
+            Empresa empresa = empresaRepository.findByEmail(email);
+            if (empresa != null) {
+                empresa.getUsuario().setPassword(passwordEncoder.encode(newPassword));
+                empresaRepository.save(empresa);
+            } else {
+                throw new RuntimeException("No se encontró un usuario o empresa con ese correo");
+            }
+        }
+
+        // Marcar token como usado
+        resetToken.setUsed(true);
+        tokenRepository.save(resetToken);
+    }
+
+}
