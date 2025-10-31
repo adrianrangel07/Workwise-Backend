@@ -113,24 +113,20 @@ public class PasswordResetService {
     }
 
     public void resetPassword(String email, String rawCode, String newPassword) {
-        // Obtener tokens no usados y ordenados por fecha descendente
         List<PasswordResetToken> tokens = tokenRepository.findByEmailAndUsedFalseOrderByExpirationDateDesc(email);
-        if (tokens.isEmpty()) {
+        if (tokens.isEmpty())
             throw new RuntimeException("Token inválido");
-        }
 
         PasswordResetToken resetToken = tokens.get(0);
 
-        if (resetToken.isExpired()) {
+        if (resetToken.isExpired())
             throw new RuntimeException("Token expirado");
-        }
 
-        // Verificar código con hash
         if (!passwordEncoder.matches(rawCode, resetToken.getToken())) {
             throw new RuntimeException("Token inválido");
         }
 
-        // Actualizar contraseña en Usuario
+        // Actualizar contraseña
         Persona persona = personaRepository.findByEmail(email);
         if (persona != null) {
             persona.getUsuario().setPassword(passwordEncoder.encode(newPassword));
@@ -145,8 +141,8 @@ public class PasswordResetService {
             }
         }
 
-        // Marcar token como usado
-        resetToken.setUsed(true);
-        tokenRepository.save(resetToken);
+        // Borrar token usado
+        tokenRepository.delete(resetToken);
     }
+
 }

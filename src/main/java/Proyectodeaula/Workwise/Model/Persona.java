@@ -56,11 +56,8 @@ public class Persona {
     @Column(name = "activo", columnDefinition = "boolean", nullable = false)
     private boolean activo;
 
-    @Column(name = "codigo_verificacion")
-    private String codigoVerificacion;
-
-    @Column(name = "verificado")
-    private Boolean verificado = false;
+    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
+    private EmailVerification emailVerification;
 
     @Lob
     @Column(name = "cv", columnDefinition = "Longblob")
