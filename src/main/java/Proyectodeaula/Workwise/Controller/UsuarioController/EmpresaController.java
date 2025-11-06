@@ -87,7 +87,9 @@ public class EmpresaController {
             }
 
             empresa.getUsuario().setPassword(passwordEncoder.encode(empresa.getUsuario().getPassword()));
-            empresa.getUsuario().setRol("EMPRESA"); // siempre asignar rol
+            empresa.getUsuario().setRol("EMPRESA");
+
+            empresa.setActivo(true);
 
             Empresa saved = empresaRepository.save(empresa);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);

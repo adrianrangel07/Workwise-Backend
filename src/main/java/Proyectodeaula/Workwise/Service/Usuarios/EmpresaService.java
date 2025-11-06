@@ -45,9 +45,8 @@ public class EmpresaService implements IempresaService {
         if (usuario != null) {
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
-            // ✅ Asegurar que siempre se guarda el rol
             if (usuario.getRol() == null || usuario.getRol().isEmpty()) {
-                usuario.setRol("EMPRESA"); // valor por defecto si viene vacío
+                usuario.setRol("EMPRESA");
             }
         }
 

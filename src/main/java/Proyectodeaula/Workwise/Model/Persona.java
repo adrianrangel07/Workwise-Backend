@@ -53,7 +53,7 @@ public class Persona {
     private String profesion;
     @Column(name = "photo", columnDefinition = "blob")
     private byte[] photo;
-    @Column(name = "activo", columnDefinition = "boolean", nullable = false)
+    @Column(name = "activo", nullable = false)
     private boolean activo;
 
     @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
