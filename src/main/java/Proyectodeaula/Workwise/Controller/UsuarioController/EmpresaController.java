@@ -124,6 +124,7 @@ public class EmpresaController {
         return ResponseEntity.ok(Map.of(
                 "message", "Login exitoso",
                 "token", token,
+                "rol", empresa.getUsuario().getRol(),
                 "empresaId", empresa.getId()));
     }
 

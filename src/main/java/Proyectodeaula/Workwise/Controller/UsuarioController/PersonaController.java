@@ -112,8 +112,10 @@ public class PersonaController {
         return ResponseEntity.ok(Map.of(
                 "message", "Login exitoso",
                 "token", token,
+                "rol", persona.getUsuario().getRol(),
                 "personaId", persona.getId(),
                 "nombre", persona.getNombre()));
+                
     }
 
     // ==================== PERFIL ====================
