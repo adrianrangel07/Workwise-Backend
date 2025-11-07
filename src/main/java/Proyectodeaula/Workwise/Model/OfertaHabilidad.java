@@ -1,5 +1,8 @@
 package Proyectodeaula.Workwise.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,11 +29,13 @@ public class OfertaHabilidad {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("ofertaId")
     @JoinColumn(name = "oferta_id")
+    @JsonIgnore // Ignorar la oferta para evitar ciclos
     private Oferta oferta;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("habilidadId")
     @JoinColumn(name = "habilidad_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Esto evita el problema del proxy
     private Habilidad habilidad;
 
     public OfertaHabilidad(Oferta oferta, Habilidad habilidad) {

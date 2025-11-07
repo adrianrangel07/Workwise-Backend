@@ -1,5 +1,7 @@
 package Proyectodeaula.Workwise.Model.Dto;
 
+import java.time.LocalDate;
+
 import Proyectodeaula.Workwise.Model.Oferta;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,13 +16,17 @@ public class OfertaPublicaDTO {
     private Long id;
     private String titulo;
     private String descripcion;
-    private String ubicacion;
     private int salario;
     private String moneda;
-    private String tipo_Contrato;
+    private String ubicacion;
+    private String tipoContrato;
+    private String tipoEmpleo;
     private String modalidad;
-    private String sector_oferta;
-    private String nivel_Educacion;
+    private LocalDate fechaPublicacion;
+    private LocalDate fechaCierre;
+    private String sectorOferta;
+    private int experiencia;
+    private String nivelEducacion;
     private boolean activo;
     private String empresaNombre;
     private String categoriaNombre;
@@ -29,16 +35,19 @@ public class OfertaPublicaDTO {
         this.id = oferta.getId();
         this.titulo = oferta.getTitulo();
         this.descripcion = oferta.getDescripcion();
-        this.ubicacion = oferta.getUbicacion();
         this.salario = oferta.getSalario();
         this.moneda = oferta.getMoneda();
-        this.tipo_Contrato = oferta.getTipo_Contrato();
+        this.ubicacion = oferta.getUbicacion();
+        this.tipoContrato = oferta.getTipo_Contrato();
+        this.tipoEmpleo = oferta.getTipo_Empleo();
         this.modalidad = oferta.getModalidad();
-        this.sector_oferta = oferta.getSector_oferta();
-        this.nivel_Educacion = oferta.getNivel_Educacion();
+        this.fechaPublicacion = oferta.getFecha_Publicacion();
+        this.fechaCierre = oferta.getFecha_Cierre();
+        this.sectorOferta = oferta.getSector_oferta();
+        this.experiencia = oferta.getExperiencia();
+        this.nivelEducacion = oferta.getNivel_Educacion();
         this.activo = oferta.isActivo();
         this.empresaNombre = oferta.getEmpresa() != null ? oferta.getEmpresa().getNombre() : null;
         this.categoriaNombre = oferta.getCategoria() != null ? oferta.getCategoria().getNombre() : null;
     }
-
 }
