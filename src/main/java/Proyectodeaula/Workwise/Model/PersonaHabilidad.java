@@ -26,6 +26,7 @@ public class PersonaHabilidad {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("personaId")
     @JoinColumn(name = "persona_id")
+    @JsonIgnore // Ignorar la oferta para evitar ciclos
     private Persona persona;
 
     @ManyToOne(fetch = FetchType.LAZY)
