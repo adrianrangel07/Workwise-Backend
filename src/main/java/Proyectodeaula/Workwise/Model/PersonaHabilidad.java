@@ -32,6 +32,7 @@ public class PersonaHabilidad {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("habilidadId")
     @JoinColumn(name = "habilidad_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Esto evita el problema del proxy
     private Habilidad habilidad;
 
     public PersonaHabilidad(Persona persona, Habilidad habilidad) {
