@@ -1,5 +1,7 @@
 package Proyectodeaula.Workwise.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,6 +28,7 @@ public class PersonaHabilidad {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("personaId")
     @JoinColumn(name = "persona_id")
+    @JsonIgnore
     private Persona persona;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,4 +47,3 @@ public class PersonaHabilidad {
         return habilidad != null ? habilidad.getNombre() : "Habilidad desconocida";
     }
 }
-
