@@ -214,4 +214,5 @@ public class OfertaController {
         ofertaHabilidadRepository.deleteById(ohId);
         return ResponseEntity.ok("Habilidad eliminada exitosamente de la oferta");
     }
+    
 }

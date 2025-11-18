@@ -47,7 +47,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/ofertas/home","/api/auth/**").permitAll() //personas invitado
 
-                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/error","/api/ofertas/buscar").permitAll()
 
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
 
