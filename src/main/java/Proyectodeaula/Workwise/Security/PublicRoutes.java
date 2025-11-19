@@ -15,6 +15,6 @@ public class PublicRoutes {
                 "/api/empresas/registrar",
                 "/api/chatbot/**",
                 "/api/ofertas/home",
-                "/api/auth/**");
+                "/api/password/**");
     }
 }

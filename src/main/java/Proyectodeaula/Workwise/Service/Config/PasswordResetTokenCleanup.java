@@ -19,12 +19,17 @@ public class PasswordResetTokenCleanup {
     }
 
     // Se ejecuta cada hora (cron: segundo, minuto, hora, día, mes, semana)
-    @Scheduled(cron = "0 0 * * * ?")
+    @Scheduled(cron = "0 0 * * * ?") // cada hora
     public void deleteExpiredTokens() {
-        List<PasswordResetToken> expiredTokens = tokenRepository.findByExpirationDateBefore(LocalDateTime.now());
+
+        LocalDateTime now = LocalDateTime.now();
+
+        // Borrar tokens expirados (usados o no)
+        List<PasswordResetToken> expiredTokens = tokenRepository.findByExpirationDateBefore(now);
+
         if (!expiredTokens.isEmpty()) {
             tokenRepository.deleteAll(expiredTokens);
         }
     }
-}
 
+}

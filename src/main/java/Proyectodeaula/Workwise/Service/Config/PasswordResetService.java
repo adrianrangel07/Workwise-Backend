@@ -43,12 +43,14 @@ public class PasswordResetService {
 
     public void sendPasswordResetToken(String email) {
         // Validar que el correo exista
-        boolean exists = (personaRepository.findByEmail(email) != null
-                && personaRepository.findByEmail(email).isActivo()) ||
-                (empresaRepository.findByEmail(email) != null && empresaRepository.findByEmail(email).isActivo());
+        Persona persona = personaRepository.findByEmail(email);
+        Empresa empresa = empresaRepository.findByEmail(email);
+
+        boolean exists = (persona != null && persona.isActivo())
+                || (empresa != null && empresa.isActivo());
 
         if (!exists) {
-            throw new RuntimeException("No existe usuario o empresa con ese correo");
+            throw new RuntimeException("El correo ingresado no se encuentra en nuestro sistema. Por favor verifica tu correo o crea una cuenta nueva." + "");
         }
 
         // Generar código de 6 dígitos
@@ -137,12 +139,13 @@ public class PasswordResetService {
                 empresa.getUsuario().setPassword(passwordEncoder.encode(newPassword));
                 empresaRepository.save(empresa);
             } else {
-                throw new RuntimeException("No se encontró un usuario o empresa con ese correo");
+                throw new RuntimeException("El correo ingresado no se encuentra registrado. Por favor verifica tu correo o crea una cuenta nueva." + "");
             }
         }
+        // Marcar token como usado
+        resetToken.setUsed(true);
+        tokenRepository.save(resetToken);
 
-        // Borrar token usado
-        tokenRepository.delete(resetToken);
     }
 
 }
