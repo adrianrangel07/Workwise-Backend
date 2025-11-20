@@ -1,28 +1,30 @@
-# ---- Etapa 1: build con Maven ----
-FROM maven:3.9.4-eclipse-temurin-17 AS build
+# ======================
+# 1) Build stage (Maven + JDK 21)
+# ======================
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+
 WORKDIR /app
 
-# Copiar configuración de Maven
+# Copia el pom y descarga dependencias (cache build)
 COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
+RUN mvn -q -e -B dependency:go-offline
 
-# Descargar dependencias (mejora caching)
-RUN mvn -B dependency:go-offline
-
-# Copiar el código fuente y construir
+# Copia el código
 COPY src ./src
-RUN mvn -B package -DskipTests
 
-# ---- Etapa 2: runtime ligero ----
-FROM eclipse-temurin:17-jre
+# Compila
+RUN mvn -q -e -B clean package -DskipTests
+
+
+# ======================
+# 2) Runtime stage (JRE 21)
+# ======================
+FROM eclipse-temurin:21-jre
+
 WORKDIR /app
 
-# Copiar el JAR generado en la etapa anterior
-COPY --from=build /app/target/*.jar ./app.jar
+COPY --from=build /app/target/*.jar app.jar
 
-# Exponer el puerto (cámbialo si tu app usa otro)
 EXPOSE 8080
 
-# Ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]
