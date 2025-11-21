@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import Proyectodeaula.Workwise.Model.Dto.PostulacionDTO;
 import Proyectodeaula.Workwise.Model.Oferta;
 import Proyectodeaula.Workwise.Model.Persona;
 import Proyectodeaula.Workwise.Model.Postulacion;
@@ -141,22 +142,24 @@ public class PostulacionController {
      */
     @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @GetMapping("/ofertas/{id}")
-    public ResponseEntity<List<Map<String, Object>>> obtenerPostulacionesPorOferta(@PathVariable Long id) {
+    public ResponseEntity<List<PostulacionDTO>> obtenerPostulacionesPorOferta(@PathVariable Long id) {
         List<Postulacion> postulaciones = postulacionRepository.findByOfertaId(id);
+
         if (postulaciones.isEmpty())
             return ResponseEntity.ok(Collections.emptyList());
 
-        List<Map<String, Object>> resultado = postulaciones.stream()
+        List<PostulacionDTO> resultado = postulaciones.stream()
                 .filter(p -> p.getPersona() != null)
-                .map(p -> {
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("postulacionId", p.getId());
-                    data.put("nombre", p.getPersona().getNombre());
-                    data.put("apellido", p.getPersona().getApellido());
-                    data.put("estado", p.getEstado());
-                    data.put("habilidades", p.getPersona().getHabilidades());
-                    return data;
-                })
+                .map(p -> new PostulacionDTO(
+                        p.getId(),
+                        p.getPersona().getNombre(),
+                        p.getPersona().getApellido(),
+                        p.getEstado(),
+                        p.getPersona().getHabilidades()
+                                .stream()
+                                .map(h -> h.getHabilidad().getNombre()) 
+                                .collect(Collectors.joining(", ")) 
+                ))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(resultado);
