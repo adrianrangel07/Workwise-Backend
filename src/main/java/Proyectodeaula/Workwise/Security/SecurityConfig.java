@@ -41,13 +41,15 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/personas/login", "/api/personas/registrar","/api/chatbot/**","/api/chat").permitAll() //personas
+                        .requestMatchers("/api/personas/login", "/api/personas/registrar", "/api/chatbot/**",
+                                "/api/chat")
+                        .permitAll() // personas
 
-                        .requestMatchers("/api/empresas/login", "/api/empresas/registrar").permitAll()  //empresas
+                        .requestMatchers("/api/empresas/login", "/api/empresas/registrar").permitAll() // empresas
 
-                        .requestMatchers("/api/ofertas/home","/api/password/**").permitAll() //personas invitado
+                        .requestMatchers("/api/ofertas/home", "/api/password/**").permitAll() // personas invitado
 
-                        .requestMatchers("/error","/api/ofertas/buscar").permitAll()
+                        .requestMatchers("/error", "/api/ofertas/buscar").permitAll()
 
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
 
@@ -56,9 +58,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated())
-                        
+
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .cors(cors -> {});
+                .cors(cors -> {
+                });
         return http.build();
     }
 
@@ -76,7 +79,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://127.0.0.1:5500","https://demonstrably-awnless-theo.ngrok-free.dev","https://workwisenav.vercel.app"));
+        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://127.0.0.1:5500",
+                "https://demonstrably-awnless-theo.ngrok-free.dev", "https://workwisenav.vercel.app",
+                "https://front-work-wise-git-main-adrianrangel07s-projects.vercel.app",
+                "https://front-work-wise-fqmmc1zh5-adrianrangel07s-projects.vercel.app"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*")); // 🔑 permitir todos
         configuration.setAllowCredentials(true);
