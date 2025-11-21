@@ -154,6 +154,7 @@ public class PostulacionController {
                     data.put("nombre", p.getPersona().getNombre());
                     data.put("apellido", p.getPersona().getApellido());
                     data.put("estado", p.getEstado());
+                    data.put("habilidades", p.getPersona().getHabilidades());
                     return data;
                 })
                 .collect(Collectors.toList());
