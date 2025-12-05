@@ -144,10 +144,10 @@ Medio (Mejora o bug menor)	< 24 horas	GitHub Issues
 Bajo (Consulta general)	< 72 horas	GitHub Discussions
 
 👨‍💻 Autor
-<p align="center"> <strong>Adrián Rangel</strong> <br> <em>Desarrollador Full Stack – Cartagena, Colombia</em> </p><p align="center"> <a href="https://github.com/adrianrangel07"> <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" /> </a> <a href="https://linkedin.com/in/adrianrangel"> <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" /> </a> <a href="mailto:adrian@workwise.com"> <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" /> </a> </p>
+<p align="center"> <strong>Adrian Rangel</strong> <br> <em>Desarrollador Full Stack – Colombia</em> </p><p align="center"> <a href="https://github.com/adrianrangel07"> <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" /> </a> <a href="https://www.linkedin.com/in/adrian-de-jesus-rangel-vides-2150311ab/"> <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" /> </a> </p>
 Stack Principal: Java | Spring Boot | Angular | Docker | MySQL 
 
-<p align="center"> <em>✨ Conectando el talento cartagenero con las oportunidades del mañana ✨</em> </p><p align="center"> <img src="https://img.shields.io/badge/🇨🇴-Hecho%20en%20Cartagena-yellow" /> <img src="https://img.shields.io/badge/🎯-ODS%208-blue" /> <img src="https://img.shields.io/badge/🚀-Producción%20Ready-green" /> </p>
+<p align="center"> <em>✨ Conectando el talento cartagenero con las oportunidades del mañana ✨</em> </p><p align="center"> <img src="https://img.shields.io/badge/🇨🇴-Hecho%20en%20Cartagena-yellow" /> <img src="https://img.shields.io/badge/🚀-Producción%20Ready-green" /> </p>
 
 🔗 **Visita el Frontend del Proyecto:**  
-[![Front WorkWise](https://img.shields.io/badge/Front--WorkWise-Visit-0366d6?logo=github&logoColor=white)](https://github.com/adrianrangel07/Front-WorkWise)
+[![Front WorkWise](https://img.shields.io/badge/Front--WorkWise-Visit-0366d6?logo=github&logoColor=white)]([https://github.com/adrianrangel07/Front-WorkWise](https://github.com/yonierva/Front-WorkWise))
