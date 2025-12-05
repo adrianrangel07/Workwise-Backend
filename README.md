@@ -1,280 +1,203 @@
+🧩 Workwise – Backend Oficial
+<p align="center"> <img src="https://tu-logo-aqui.com/logo.png" alt="Workwise Logo" width="200"/> </p><p align="center"> Plataforma de gestión de empleo para la ciudad de Cartagena <br> <strong>Conectando talento local con oportunidades laborales</strong> </p><p align="center"> <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" /> <img src="https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" /> <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" /> <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" /> <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" /> <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" /> </p><p align="center"> <img src="https://img.shields.io/github/last-commit/tu-usuario/workwise-backend" /> <img src="https://img.shields.io/badge/license-MIT-blue.svg" /> <img src="https://img.shields.io/badge/version-1.0.0-green.svg" /> </p>
+
+📋 Descripción General
+Workwise es una plataforma web integral diseñada para facilitar la conexión entre empresas y talento local en la ciudad de Cartagena, contribuyendo directamente al Objetivo de Desarrollo Sostenible #8: Trabajo decente y crecimiento económico.
+
+Este repositorio contiene el backend completo de la aplicación, desarrollado con tecnologías empresariales modernas que garantizan escalabilidad, seguridad y alto rendimiento. El sistema proporciona una API REST robusta que soporta todas las operaciones del ecosistema Workwise.
+
+🎯 Propósito del Backend
+Proveer servicios esenciales para la operación segura y eficiente de la plataforma mediante:
+
+API RESTful para comunicación con frontend Angular
+
+Gestión centralizada de usuarios, ofertas y postulaciones
+
+Sistema de autenticación robusto y seguro
+
+Integraciones inteligentes con servicios externos
+
+Arquitectura escalable preparada para crecimiento
+
+🏗️ Arquitectura del Sistema
+
+graph TB
+    A[Frontend Angular] --> B[API Gateway]
+    B --> C[Microservicios Spring Boot]
+    C --> D[(Base de Datos MySQL)]
+    C --> E[Servicio de Chatbot]
+    C --> F[Servicio de Notificaciones]
+    C --> G[Servicio de Archivos]
+    
+    style A fill:#DD0031,color:white
+    style C fill:#6DB33F,color:white
+    style D fill:#4479A1,color:white
+
+📁 Estructura del Proyecto
+text
+workwise-backend/
+├── src/main/java/com/workwise/
+│   ├── config/                 # Configuraciones de la aplicación
+│   ├── controller/            # Controladores REST API
+│   ├── service/               # Lógica de negocio
+│   ├── repository/            # Capa de acceso a datos
+│   ├── model/                 # Entidades y DTOs
+│   ├── security/              # Configuración de seguridad
+│   ├── exception/             # Manejo de excepciones
+│   └── util/                  # Utilidades y helpers
+├── src/main/resources/
+│   ├── application.yml        # Configuración principal
+│   └── db/migration/          # Scripts de base de datos
+└── docker/                    # Configuración Docker
+
+✨ Características Principales
+🔐 Módulo de Autenticación y Seguridad
+Característica	Descripción	Tecnología
+Autenticación JWT	Tokens seguros con expiración configurable	Spring Security + JWT
+Roles Múltiples	Sistema granular de permisos	Spring Security
+Registro Verificado	Validación por correo electrónico	JavaMailSender
+CORS Configurado	Acceso controlado desde frontend	WebConfig
+Encriptación	Datos sensibles protegidos	BCrypt
+👥 Gestión de Usuarios
+Tipo de Usuario	Permisos	Características Especiales
+👤 Candidato	Básicos	Perfil profesional, CV, habilidades, historial laboral
+🏢 Empresa	Intermedios	Publicación de ofertas, gestión de postulaciones, dashboard
+🛡️ Administrador	Totales	Gestión de usuarios, moderación, estadísticas globales
+💼 Sistema de Ofertas Laborales
+
+Publicación Inteligente: Formularios guiados para creación de vacantes
+
+Filtros Avanzados: Búsqueda por categoría, salario, experiencia y ubicación
+
+Estados Múltiples: Abierta, Cerrada, En revisión
 
+Estadísticas: Visualizaciones para empresas y/o personas
 
-🧩 Workwise – Backend Oficial 
-Plataforma de gestión de empleo para la ciudad de Cartagena
-Desarrollada con Java + Spring Boot + MySQL + Docker
-<p align="center"> <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=coffeescript&logoColor=white" /> <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" /> <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" /> <img src="https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white" /> <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" /> <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" /> </p>
-📘 Descripción General
+📄 Sistema de Postulaciones
+text
+Flujo de Postulación:
+1. Candidato explora ofertas → 2. Aplica con un click → 3. Sistema notifica a empresa
+4. Empresa revisa perfil → 5. Cambia estado de postulación → 6. Candidato recibe actualizaciones
 
-Workwise es una plataforma web que facilita la conexión entre empresas y personas en la ciudad de Cartagena, promoviendo el Objetivo de Desarrollo Sostenible #8 (Trabajo decente y crecimiento económico).
+🧠 Sistema de Recomendaciones Inteligentes
+Matchmaking Automático: Algoritmo de compatibilidad candidato-oferta
 
-El backend provee todos los servicios esenciales para la operación segura, rápida y eficiente del sistema, permitiendo:
+Ranking Personalizado: Puntuación basada en múltiples factores
 
-Gestión de usuarios (personas y empresas)
+Aprendizaje Continuo: Mejora basada en interacciones de usuarios
 
-Procesos de autenticación y autorización vía JWT
+🛠️ Tecnologías Utilizadas
+🔧 Backend Principal
+<p> <img src="https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk&logoColor=white" /> 
+    <img src="https://img.shields.io/badge/Spring%20Boot-3.1.5-6DB33F?logo=springboot&logoColor=white" /> 
+    <img src="https://img.shields.io/badge/Spring%20Security-6.1.5-6DB33F?logo=springsecurity&logoColor=white" /> 
+    <img src="https://img.shields.io/badge/JPA/Hibernate-6.2.4-59666C?logo=hibernate&logoColor=white" /> </p>
+🗄️ Base de Datos y Persistencia
+<p> <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white" /> </p>
+🔐 Seguridad y Autenticación
+<p> <img src="https://img.shields.io/badge/JWT-0.11.5-000000?logo=jsonwebtokens&logoColor=white" /> <img src="https://img.shields.io/badge/BCrypt-0.10.1-004D40" /> </p>
+🛠️ Herramientas de Desarrollo
+<p> <img src="https://img.shields.io/badge/Docker-24.0-2496ED?logo=docker&logoColor=white" /> 
+    <img src="https://img.shields.io/badge/Lombok-1.18.30-A50034" /> 
+    <img src="https://img.shields.io/badge/Vercel-Deploy-000000?logo=vercel&logoColor=white" /> </p>
 
-Administración de ofertas laborales
+[![Front WorkWise](https://img.shields.io/badge/Front--WorkWise-Visit-0366d6?logo=github&logoColor=white)](https://github.com/adrianrangel07/Front-WorkWise)
 
-Envío y seguimiento de postulaciones
 
-Integración con chatbot para soporte inteligente
+📊 Base de Datos - Modelo Relacional
+sql
+-- Estructura principal simplificada
+USERS
+├── candidates (id, user_id, profession, experience_years, ...)
+├── companies (id, user_id, company_size, industry, ...)
+├── administrators (id, user_id, department, ...)
+│
+OFFERS
+├── job_offers (id, company_id, title, description, ...)
+├── job_categories (id, name, description)
+│
+APPLICATIONS
+├── applications (id, candidate_id, offer_id, status, ...)
+├── application_history (id, application_id, status, notes, ...)
+│
+SKILLS & MATCHING
+├── skills (id, name, category)
+├── candidate_skills (candidate_id, skill_id, proficiency)
+├── offer_skills (offer_id, skill_id, importance)
+🔧 Configuración y Despliegue
+Requisitos Previos
+Java JDK 17+
 
-Manejo de roles: candidato, empresa, administrador
+MySQL 8.0+
 
-Procesamiento de CV, validaciones y flujos de selección
+Docker 24.0+
 
-Recomendaciones personalizadas de empleos
+Maven 3.9+
 
-Es un backend robusto, modular y escalable, construido en Java + Spring Boot, pensado para integrarse con el frontend de Angular, alojado por separado.
+  workwise-backend
 
-🎯 Objetivo del Proyecto
+🚀 Roadmap de Desarrollo
+Q1 2025 🟢 En Progreso
+Arquitectura base y autenticación
 
-Aportar a la empleabilidad en Cartagena mediante una plataforma de acceso fácil que:
+CRUD de usuarios y ofertas
 
-Conecte rápidamente empresas con talento local
+Sistema de postulaciones básico
 
-Permita a las personas encontrar oportunidades compatibles con su perfil
+Pruebas unitarias y de integración
 
-Genere un proceso de selección transparente y ágil
+Optimización de consultas SQL
 
-Ofrezca recursos profesionales para mejorar la empleabilidad
+Sistema de logging centralizado
 
-⚙️ Características Principales del Backend
-🔐 Módulo de Autenticación
+Q2 2025 🟡 Planificado
+Motor de búsqueda avanzado 
 
-Registro de candidatos y empresas
+Dashboard de analytics con power BI
 
-Login seguro
+Q3 2025 🔵 Futuro
+Microservicios especializados
 
-Autenticación JWT
+App móvil nativa
 
-Recuperación y verificación de cuenta por correo
+Mercado de habilidades especializadas
 
-Roles y permisos:
+Programa de certificaciones
 
-👤 Candidato
+🛡️ Consideraciones de Seguridad
+Medidas Implementadas
+Autenticación JWT con refresh tokens
 
-🏢 Empresa
+BCrypt para hashing de contraseñas
 
-🛡️ Administrador
+Validación de entrada en todos los endpoints
 
-🧑‍💼 Gestión de Usuarios
+CORS configurado específicamente para el frontend
 
-Perfiles completos para candidatos
+Protección contra CSRF y XSS
 
-Perfiles empresariales
+Rate limiting en endpoints sensibles
 
-Subida, actualización y validación de CV
+Encriptación de datos sensibles en base de datos
 
-Gestión de habilidades y categorías profesionales
+📞 Soporte y Contacto
+Canales de Comunicación
+Reporte de Issues: GitHub Issues
 
-Información laboral y académica
+Discusiones: GitHub Discussions
 
-💼 Gestión de Ofertas
+Correo: soporte@workwise.com
 
-Creación, edición y eliminación de vacantes
-
-Filtros avanzados por categoría, salario, ubicación
-
-Estadísticas por empresa
-
-Estado de ofertas: abierta, cerrada, pausada
-
-📄 Postulaciones
-
-Aplicación directa a una oferta
-
-Seguimiento de estado
-
-Procesos de selección
-
-Historial del candidato
-
-Gestión empresarial de postulaciones
-
-🤖 Chatbot Integrado
-
-El backend se comunica con un chatbot inteligente que:
-
-Asiste a candidatos en la búsqueda de empleo
-
-Responde dudas comunes
-
-Recomienda recursos y ofertas
-
-Guía a empresas durante la publicación de vacantes
-
-🧠 Sistema Inteligente
-
-Incluye algoritmos que permiten:
-
-Matchmaking inteligente entre candidato y oferta
-
-Recomendación automática de empleos según perfil
-
-Ranking de compatibilidad
-
-Análisis de CV (estructura, palabras clave, habilidades)
-
-Detección de posibles coincidencias de habilidades y categorías
-
-📚 Recursos Formativos
-
-Workwise ofrece un apartado único de recursos:
-
-Videos
-
-PDFs
-
-Tips profesionales
-
-Guías para entrevistas
-
-Consejos para mejorar el CV
-
-Esto hace que Workwise vaya más allá de un simple portal de empleo.
-
-🧬 Arquitectura del Sistema
-Frontend Angular  →  Workwise Backend (API REST)  →  MySQL
-                           ↓
-                         Chatbot
-                           ↓
-                        Servicios externos
-
-
-El backend es un monolito modular, separado del frontend, pero estructurado por capas:
-
-controller/
-service/
-repository/
-model/
-config/
-security/
-
-🗄️ Base de Datos (MySQL)
-Entidades Principales
-
-Usuario
-
-Persona
-
-Empresa
-
-Oferta
-
-Postulacion
-
-Habilidad
-
-CategoriaProfesional
-
-VerificacionEmail
-
-(y otras entidades de apoyo)
-
-Relaciones:
-
-Persona ↔ Usuario
-
-Empresa ↔ Ofertas
-
-Persona ↔ Postulaciones ↔ Ofertas
-
-Ofertas ↔ Habilidades
-
-Categorías ↔ Personas / Ofertas
-
-🐳 Despliegue
-Docker
-
-El sistema está completamente contenerizado:
-
-docker build -t workwise-backend .
-docker run -p 8080:8080 workwise-backend
-
-Producción
-
-Backend desplegado mediante contenedores
-
-Frontend alojado en Vercel
-
-🧪 Instalación en Local
-1. Clonar el repositorio
-git clone https://github.com/adrianrangel07/Workwise-Backend.git
-
-2. Instalar dependencias
-./mvnw clean install
-
-3. Ejecutar
-./mvnw spring-boot:run
-
-📈 Roadmap Profesional
-Q1 – 2025
-
-🔧 Mejoras en seguridad
-
-🧪 Pruebas Unitarias y de Integración
-
-🌐 Internacionalización
-
-Q2 – 2025
-
-🔎 Motor de búsqueda avanzado
-
-🧠 IA para análisis de CV
-
-🚀 Optimización de recomendaciones
-
-Q3 – 2025
-
-📨 Sistema de notificaciones por correo y WhatsApp
-
-📊 Panel empresarial avanzado
-
-🗄️ Módulo de analíticas
-
-Q4 – 2025
-
-🤝 Red de contactos
-
-📱 App móvil (Ionic / Flutter)
-
-🔌 Microservicios para escalabilidad
-
-🔒 Seguridad Implementada
-
-JWT para protección de endpoints
-
-Roles y privilegios
-
-CORS configurado
-
-Validación de datos en API
-
-Verificación por correo electrónico
-
-Control total de sesiones
-
-🤝 Contribución
-
-Se aceptan contribuciones para:
-
-Optimización del rendimiento
-
-Nuevas funcionalidades
-
-Mejoras en seguridad
-
-Documentación
-
-Testing
+Respuesta a Incidentes
+Nivel	Tiempo de Respuesta	Canal Preferido
+Crítico (Sistema caído)	< 1 hora	Email + WhatsApp
+Alto (Funcionalidad principal)	< 4 horas	Email
+Medio (Mejora o bug menor)	< 24 horas	GitHub Issues
+Bajo (Consulta general)	< 72 horas	GitHub Discussions
 
 👨‍💻 Autor
+<p align="center"> <strong>Adrián Rangel</strong> <br> <em>Desarrollador Full Stack – Cartagena, Colombia</em> </p><p align="center"> <a href="https://github.com/adrianrangel07"> <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" /> </a> <a href="https://linkedin.com/in/adrianrangel"> <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" /> </a> <a href="mailto:adrian@workwise.com"> <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" /> </a> </p>
+Stack Principal: Java | Spring Boot | Angular | Docker | MySQL 
 
-Adrián Rangel
-Desarrollador Full Stack – Cartagena, Colombia
-📌 Java | Spring Boot | Angular | Docker | MySQL
-🌐 GitHub: github.com/adrianrangel07
+<p align="center"> <em>✨ Conectando el talento cartagenero con las oportunidades del mañana ✨</em> </p><p align="center"> <img src="https://img.shields.io/badge/🇨🇴-Hecho%20en%20Cartagena-yellow" /> <img src="https://img.shields.io/badge/🎯-ODS%208-blue" /> <img src="https://img.shields.io/badge/🚀-Producción%20Ready-green" /> </p>
 
-🎉 Gracias por revisar Workwise Backend
