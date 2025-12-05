@@ -19,37 +19,6 @@ Integraciones inteligentes con servicios externos
 
 Arquitectura escalable preparada para crecimiento
 
-🏗️ Arquitectura del Sistema
-
-graph TB
-    A[Frontend Angular] --> B[API Gateway]
-    B --> C[Microservicios Spring Boot]
-    C --> D[(Base de Datos MySQL)]
-    C --> E[Servicio de Chatbot]
-    C --> F[Servicio de Notificaciones]
-    C --> G[Servicio de Archivos]
-    
-    style A fill:#DD0031,color:white
-    style C fill:#6DB33F,color:white
-    style D fill:#4479A1,color:white
-
-📁 Estructura del Proyecto
-text
-workwise-backend/
-├── src/main/java/com/workwise/
-│   ├── config/                 # Configuraciones de la aplicación
-│   ├── controller/            # Controladores REST API
-│   ├── service/               # Lógica de negocio
-│   ├── repository/            # Capa de acceso a datos
-│   ├── model/                 # Entidades y DTOs
-│   ├── security/              # Configuración de seguridad
-│   ├── exception/             # Manejo de excepciones
-│   └── util/                  # Utilidades y helpers
-├── src/main/resources/
-│   ├── application.yml        # Configuración principal
-│   └── db/migration/          # Scripts de base de datos
-└── docker/                    # Configuración Docker
-
 ✨ Características Principales
 🔐 Módulo de Autenticación y Seguridad
 Característica	Descripción	Tecnología
@@ -101,29 +70,8 @@ Aprendizaje Continuo: Mejora basada en interacciones de usuarios
     <img src="https://img.shields.io/badge/Lombok-1.18.30-A50034" /> 
     <img src="https://img.shields.io/badge/Vercel-Deploy-000000?logo=vercel&logoColor=white" /> </p>
 
-[![Front WorkWise](https://img.shields.io/badge/Front--WorkWise-Visit-0366d6?logo=github&logoColor=white)](https://github.com/adrianrangel07/Front-WorkWise)
-
-
 📊 Base de Datos - Modelo Relacional
-sql
--- Estructura principal simplificada
-USERS
-├── candidates (id, user_id, profession, experience_years, ...)
-├── companies (id, user_id, company_size, industry, ...)
-├── administrators (id, user_id, department, ...)
-│
-OFFERS
-├── job_offers (id, company_id, title, description, ...)
-├── job_categories (id, name, description)
-│
-APPLICATIONS
-├── applications (id, candidate_id, offer_id, status, ...)
-├── application_history (id, application_id, status, notes, ...)
-│
-SKILLS & MATCHING
-├── skills (id, name, category)
-├── candidate_skills (candidate_id, skill_id, proficiency)
-├── offer_skills (offer_id, skill_id, importance)
+
 🔧 Configuración y Despliegue
 Requisitos Previos
 Java JDK 17+
@@ -134,7 +82,7 @@ Docker 24.0+
 
 Maven 3.9+
 
-  workwise-backend
+workwise-backend
 
 🚀 Roadmap de Desarrollo
 Q1 2025 🟢 En Progreso
@@ -201,3 +149,5 @@ Stack Principal: Java | Spring Boot | Angular | Docker | MySQL
 
 <p align="center"> <em>✨ Conectando el talento cartagenero con las oportunidades del mañana ✨</em> </p><p align="center"> <img src="https://img.shields.io/badge/🇨🇴-Hecho%20en%20Cartagena-yellow" /> <img src="https://img.shields.io/badge/🎯-ODS%208-blue" /> <img src="https://img.shields.io/badge/🚀-Producción%20Ready-green" /> </p>
 
+🔗 **Visita el Frontend del Proyecto:**  
+[![Front WorkWise](https://img.shields.io/badge/Front--WorkWise-Visit-0366d6?logo=github&logoColor=white)](https://github.com/adrianrangel07/Front-WorkWise)
