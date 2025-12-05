@@ -1,4 +1,4 @@
-<img width="317" height="331" alt="wwnIcon" src="https://github.com/user-attachments/assets/7d65173b-4cb6-44b1-be12-ec769e760aba" />
+
 
 🧩 Workwise – Backend Oficial 
 Plataforma de gestión de empleo para la ciudad de Cartagena
