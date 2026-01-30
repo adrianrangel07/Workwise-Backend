@@ -78,6 +78,7 @@ public class PostulacionController {
      * DELETE /api/postulaciones/eliminar/{id}
      * Solo administradores pueden eliminar postulaciones.
      */
+
     @PreAuthorize("hasAnyRole('ADMIN', 'PERSONA')")
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<Map<String, Object>> eliminarPostulacion(
