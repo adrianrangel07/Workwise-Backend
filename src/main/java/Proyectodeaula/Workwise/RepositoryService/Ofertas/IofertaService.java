@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import Proyectodeaula.Workwise.Model.Empresa;
-import Proyectodeaula.Workwise.Model.Oferta;
+import Proyectodeaula.Workwise.Model.Empresas.Empresa;
+import Proyectodeaula.Workwise.Model.Ofertas.Oferta;
 
 public interface IofertaService {
     Page<Oferta> listarOfertasPorEmpresaPaginado(Empresa empresa, Pageable pageable);

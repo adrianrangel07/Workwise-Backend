@@ -16,6 +16,7 @@ public class ChatbotService {
         private final Map<String, List<String>> sinonimos;
         private final Random random = new Random();
 
+        // Constructor del chatbot
         public ChatbotService() {
                 respuestas = new HashMap<>();
                 sinonimos = new HashMap<>();
@@ -24,6 +25,7 @@ public class ChatbotService {
                 inicializarRespuestas();
         }
 
+        // Método para obtener una respuesta basada en la intención detectada
         // ============================================================
         // 🔹 SINÓNIMOS / INTENCIONES
         // ============================================================
@@ -151,6 +153,7 @@ public class ChatbotService {
 
         }
 
+        
         // ============================================================
         // 🔹 RESPUESTAS ALEATORIAS / DINÁMICAS
         // ============================================================

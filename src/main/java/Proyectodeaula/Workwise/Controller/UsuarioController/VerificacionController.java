@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import Proyectodeaula.Workwise.Model.EmailVerification;
-import Proyectodeaula.Workwise.Model.Persona;
+import Proyectodeaula.Workwise.Model.Otros.EmailVerification;
+import Proyectodeaula.Workwise.Model.Personas.Persona;
 import Proyectodeaula.Workwise.Repository.General.EmailVerificationRepository;
 import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;
 import Proyectodeaula.Workwise.RepositoryService.VerificacionCodeGenerator;

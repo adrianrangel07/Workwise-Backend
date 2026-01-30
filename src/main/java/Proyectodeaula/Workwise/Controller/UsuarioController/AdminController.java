@@ -17,7 +17,6 @@ import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;
 import Proyectodeaula.Workwise.Service.Usuarios.EmpresaService;
 import Proyectodeaula.Workwise.Service.Usuarios.PersonaService;
 
-
 @RestController
 @RequestMapping("/api/admin")
 @PreAuthorize("hasRole('ADMIN')")
@@ -41,8 +40,8 @@ public class AdminController {
     public String listarEmpresas() {
         return ResponseEntity.ok(empresaService.listar_Emp()).toString();
     }
-    
 
+    // Toggle activar/desactivar usuario
     @PutMapping("/usuarios/{id}/desactivar")
     public ResponseEntity<?> desactivarUsuario(@PathVariable Long id) {
         return personaRepository.findById(id)
@@ -55,6 +54,7 @@ public class AdminController {
                         .body(Map.of("error", "Usuario no encontrado")));
     }
 
+    // Eliminar usuario
     @DeleteMapping("/usuarios/{id}")
     public ResponseEntity<?> eliminarUsuario(@PathVariable Long id) {
         try {

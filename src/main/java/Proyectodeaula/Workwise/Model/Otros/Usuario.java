@@ -1,4 +1,4 @@
-package Proyectodeaula.Workwise.Model;
+package Proyectodeaula.Workwise.Model.Otros;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,14 +16,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "habilidades")
-public class Habilidad {
-
+@Table(name = "usuarios")
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre", columnDefinition = "varchar(100)", nullable = false)
-    private String nombre;
-
+    @Column(name = "email", columnDefinition = "varchar(100)", nullable = false, unique = true)
+    private String email;
+    @Column(name = "password", columnDefinition = "varchar(100)", nullable = false)
+    private String password;
+    @Column(name = "rol", columnDefinition = "varchar(50)", nullable = false)
+    private String rol;
 }

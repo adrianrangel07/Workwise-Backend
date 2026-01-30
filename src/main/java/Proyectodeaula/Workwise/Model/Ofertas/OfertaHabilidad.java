@@ -1,7 +1,9 @@
-package Proyectodeaula.Workwise.Model;
+package Proyectodeaula.Workwise.Model.Ofertas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import Proyectodeaula.Workwise.Model.Otros.Habilidad;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,27 +21,27 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "persona_habilidad")
-public class PersonaHabilidad {
+@Table(name = "oferta_habilidad")
+public class OfertaHabilidad {
 
     @EmbeddedId
-    private PersonaHabilidadId id = new PersonaHabilidadId();
+    private OfertaHabilidadId id = new OfertaHabilidadId();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("personaId")
-    @JoinColumn(name = "persona_id")
-    @JsonIgnore
-    private Persona persona;
+    @MapsId("ofertaId")
+    @JoinColumn(name = "oferta_id")
+    @JsonIgnore // Ignorar la oferta para evitar ciclos
+    private Oferta oferta;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("habilidadId")
     @JoinColumn(name = "habilidad_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Esto evita el problema del proxy
     private Habilidad habilidad;
 
-    public PersonaHabilidad(Persona persona, Habilidad habilidad) {
-        this.persona = persona;
+    public OfertaHabilidad(Oferta oferta, Habilidad habilidad) {
+        this.oferta = oferta;
         this.habilidad = habilidad;
-        this.id = new PersonaHabilidadId(persona.getId(), habilidad.getId());
     }
 
     @Override

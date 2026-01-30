@@ -8,18 +8,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import Proyectodeaula.Workwise.Model.Empresa;
-import Proyectodeaula.Workwise.Model.Oferta;
+import Proyectodeaula.Workwise.Model.Empresas.Empresa;
+import Proyectodeaula.Workwise.Model.Ofertas.Oferta;
 import Proyectodeaula.Workwise.Repository.Empresa.Repository_Emp;
 import Proyectodeaula.Workwise.Repository.Oferta.OfertaRepository;
 import Proyectodeaula.Workwise.RepositoryService.Ofertas.IofertaService;
+
+
 
 @Service
 public class OfertaService implements IofertaService {
 
     @Autowired
     private OfertaRepository ofertaRepository;
-    
 
     @Autowired
     private Repository_Emp empresaRepository;
@@ -115,4 +116,3 @@ public class OfertaService implements IofertaService {
         });
     }
 }
-

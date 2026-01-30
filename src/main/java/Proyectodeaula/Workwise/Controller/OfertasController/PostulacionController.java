@@ -1,6 +1,5 @@
 package Proyectodeaula.Workwise.Controller.OfertasController;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,12 +25,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import Proyectodeaula.Workwise.Model.Dto.PostulacionDTO;
-import Proyectodeaula.Workwise.Model.Oferta;
-import Proyectodeaula.Workwise.Model.Persona;
-import Proyectodeaula.Workwise.Model.Postulacion;
-import Proyectodeaula.Workwise.Repository.Oferta.OfertaRepository;
+import Proyectodeaula.Workwise.Model.Ofertas.Oferta;
+import Proyectodeaula.Workwise.Model.Personas.Persona;
+import Proyectodeaula.Workwise.Model.Personas.Postulacion;
 import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;
 import Proyectodeaula.Workwise.Repository.Postulacion.Repository_Postulacion;
+import Proyectodeaula.Workwise.Service.Ofertas.PostulacionService;
 
 @RestController
 @RequestMapping("/api/postulaciones")
@@ -41,7 +40,7 @@ public class PostulacionController {
     private Repository_Postulacion postulacionRepository;
 
     @Autowired
-    private OfertaRepository ofertaRepository;
+    private PostulacionService postulacionService;
 
     @Autowired
     private Repository_Persona personaRepository;
@@ -60,57 +59,18 @@ public class PostulacionController {
 
         try {
             Long ofertaId = request.get("ofertaId");
-            if (ofertaId == null) {
-                response.put("success", false);
-                response.put("message", "Falta el ID de la oferta.");
-                return ResponseEntity.badRequest().body(response);
-            }
+            String email = authentication.getName();
 
-            // Usuario autenticado desde JWT
-            String correoUsuario = authentication.getName();
-            Optional<Persona> personaOpt = personaRepository.findOptionalByEmail(correoUsuario);
-
-            if (personaOpt.isEmpty()) {
-                response.put("success", false);
-                response.put("message", "Usuario no encontrado.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-
-            Persona persona = personaOpt.get();
-
-            // Verificar si ya está postulado
-            Optional<Postulacion> existente = postulacionRepository.findByOfertaIdAndPersonaId(ofertaId,
-                    persona.getId());
-            if (existente.isPresent()) {
-                response.put("success", false);
-                response.put("message", "Ya estás postulado a esta oferta.");
-                return ResponseEntity.ok(response);
-            }
-
-            Optional<Oferta> ofertaOpt = ofertaRepository.findById(ofertaId);
-            if (ofertaOpt.isEmpty()) {
-                response.put("success", false);
-                response.put("message", "Oferta no encontrada.");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-            }
-
-            // Crear postulación
-            Postulacion postulacion = new Postulacion();
-            postulacion.setOferta(ofertaOpt.get());
-            postulacion.setPersona(persona);
-            postulacion.setEstado("Pendiente");
-            postulacion.setN_personas(1);
-            postulacion.setFecha_postulacion(LocalDate.now());
-            postulacionRepository.save(postulacion);
+            postulacionService.postularse(ofertaId, email);
 
             response.put("success", true);
-            response.put("message", "Postulación exitosa.");
+            response.put("message", "Postulación exitosa");
             return ResponseEntity.ok(response);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             response.put("success", false);
-            response.put("message", "Error al procesar la postulación.");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
@@ -118,22 +78,32 @@ public class PostulacionController {
      * DELETE /api/postulaciones/eliminar/{id}
      * Solo administradores pueden eliminar postulaciones.
      */
-    @PreAuthorize("hasRole('ADMIN','PERSONA')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PERSONA')")
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<Map<String, Object>> eliminarPostulacion(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> eliminarPostulacion(
+            @PathVariable Long id,
+            Authentication authentication) {
+
         Map<String, Object> response = new HashMap<>();
 
-        Optional<Postulacion> postulacionOpt = postulacionRepository.findById(id);
-        if (postulacionOpt.isEmpty()) {
-            response.put("success", false);
-            response.put("message", "Postulación no encontrada.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
+        try {
+            boolean esAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-        postulacionRepository.delete(postulacionOpt.get());
-        response.put("success", true);
-        response.put("message", "Postulación eliminada con éxito.");
-        return ResponseEntity.ok(response);
+            postulacionService.eliminarPostulacion(
+                    id,
+                    authentication.getName(),
+                    esAdmin);
+
+            response.put("success", true);
+            response.put("message", "Postulación eliminada con éxito");
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
     }
 
     /**
@@ -157,9 +127,8 @@ public class PostulacionController {
                         p.getEstado(),
                         p.getPersona().getHabilidades()
                                 .stream()
-                                .map(h -> h.getHabilidad().getNombre()) 
-                                .collect(Collectors.joining(", ")) 
-                ))
+                                .map(h -> h.getHabilidad().getNombre())
+                                .collect(Collectors.joining(", "))))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(resultado);
@@ -203,27 +172,19 @@ public class PostulacionController {
             @RequestBody Map<String, String> body) {
 
         Map<String, Object> response = new HashMap<>();
-        Optional<Postulacion> postulacionOpt = postulacionRepository.findById(id);
 
-        if (postulacionOpt.isEmpty()) {
-            response.put("error", "Postulación no encontrada");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
+        try {
+            String nuevoEstado = body.get("estado");
+            postulacionService.cambiarEstado(id, nuevoEstado);
 
-        String nuevoEstado = body.get("estado");
-        if (nuevoEstado == null || nuevoEstado.isEmpty()) {
-            response.put("error", "El estado no puede estar vacío");
+            response.put("success", true);
+            response.put("estado", nuevoEstado);
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            response.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
-
-        Postulacion postulacion = postulacionOpt.get();
-        postulacion.setEstado(nuevoEstado);
-        postulacionRepository.save(postulacion);
-
-        response.put("success", true);
-        response.put("message", "Estado actualizado correctamente");
-        response.put("estado", nuevoEstado);
-        return ResponseEntity.ok(response);
     }
 
     /**

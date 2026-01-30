@@ -1,7 +1,8 @@
-package Proyectodeaula.Workwise.Model;
+package Proyectodeaula.Workwise.Model.Personas;
 
 import java.time.LocalDate;
 
+import Proyectodeaula.Workwise.Model.Ofertas.Oferta;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -40,6 +40,7 @@ public class ChatControllerIA {
         this.objectMapper = new ObjectMapper();
     }
 
+    // Endpoint para manejar solicitudes de chat
     @GetMapping("/chat")
     public ResponseEntity<String> chat(@RequestParam("message") String message) {
         try {

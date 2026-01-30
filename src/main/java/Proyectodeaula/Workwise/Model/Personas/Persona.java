@@ -1,4 +1,4 @@
-package Proyectodeaula.Workwise.Model;
+package Proyectodeaula.Workwise.Model.Personas;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -6,6 +6,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import Proyectodeaula.Workwise.Model.Otros.CategoriaProfesional;
+import Proyectodeaula.Workwise.Model.Otros.EmailVerification;
+import Proyectodeaula.Workwise.Model.Otros.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

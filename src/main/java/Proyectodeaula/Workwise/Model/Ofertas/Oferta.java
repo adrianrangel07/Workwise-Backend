@@ -1,9 +1,11 @@
-package Proyectodeaula.Workwise.Model;
+package Proyectodeaula.Workwise.Model.Ofertas;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import Proyectodeaula.Workwise.Model.Empresas.Empresa;
+import Proyectodeaula.Workwise.Model.Otros.CategoriaProfesional;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

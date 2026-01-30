@@ -3,7 +3,7 @@ package Proyectodeaula.Workwise.RepositoryService.Usuarios;
 import java.util.List;
 import java.util.Optional;
 
-import Proyectodeaula.Workwise.Model.Empresa;
+import Proyectodeaula.Workwise.Model.Empresas.Empresa;
 
 public interface IempresaService {
 

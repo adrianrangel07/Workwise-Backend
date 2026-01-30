@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import Proyectodeaula.Workwise.Model.PasswordResetToken;
+import Proyectodeaula.Workwise.Model.Otros.PasswordResetToken;
 import Proyectodeaula.Workwise.Repository.General.PasswordResetTokenRepository;
 
 @Component

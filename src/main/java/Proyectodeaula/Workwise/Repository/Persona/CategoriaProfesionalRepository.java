@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import Proyectodeaula.Workwise.Model.CategoriaProfesional;
+import Proyectodeaula.Workwise.Model.Otros.CategoriaProfesional;
 
 @Repository
 public interface CategoriaProfesionalRepository extends JpaRepository<CategoriaProfesional, Long> {

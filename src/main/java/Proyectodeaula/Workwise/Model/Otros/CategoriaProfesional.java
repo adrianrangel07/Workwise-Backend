@@ -1,9 +1,11 @@
-package Proyectodeaula.Workwise.Model;
+package Proyectodeaula.Workwise.Model.Otros;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import Proyectodeaula.Workwise.Model.Ofertas.Oferta;
+import Proyectodeaula.Workwise.Model.Personas.Persona;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

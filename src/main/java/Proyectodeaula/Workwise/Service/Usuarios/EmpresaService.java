@@ -9,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import Proyectodeaula.Workwise.Model.Empresa;
-import Proyectodeaula.Workwise.Model.Usuario;
+import Proyectodeaula.Workwise.Model.Empresas.Empresa;
+import Proyectodeaula.Workwise.Model.Otros.Usuario;
 import Proyectodeaula.Workwise.Repository.Empresa.Crud_Emp;
 import Proyectodeaula.Workwise.Repository.Empresa.Repository_Emp;
 import Proyectodeaula.Workwise.RepositoryService.Usuarios.IempresaService;

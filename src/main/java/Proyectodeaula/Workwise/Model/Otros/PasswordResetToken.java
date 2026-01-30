@@ -1,4 +1,4 @@
-package Proyectodeaula.Workwise.Model;
+package Proyectodeaula.Workwise.Model.Otros;
 
 import java.time.LocalDateTime;
 

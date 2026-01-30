@@ -2,7 +2,7 @@ package Proyectodeaula.Workwise.Model.Dto;
 
 import java.time.LocalDate;
 
-import Proyectodeaula.Workwise.Model.Oferta;
+import Proyectodeaula.Workwise.Model.Ofertas.Oferta;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

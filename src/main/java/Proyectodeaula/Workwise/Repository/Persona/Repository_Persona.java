@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import Proyectodeaula.Workwise.Model.Persona;
+import Proyectodeaula.Workwise.Model.Personas.Persona;
 
 public interface Repository_Persona extends JpaRepository<Persona, Long> {
 

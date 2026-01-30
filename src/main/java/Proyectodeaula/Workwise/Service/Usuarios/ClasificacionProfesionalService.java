@@ -3,7 +3,7 @@ package Proyectodeaula.Workwise.Service.Usuarios;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import Proyectodeaula.Workwise.Model.CategoriaProfesional;
+import Proyectodeaula.Workwise.Model.Otros.CategoriaProfesional;
 import Proyectodeaula.Workwise.Repository.Persona.CategoriaProfesionalRepository;
 
 @Service

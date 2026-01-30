@@ -19,6 +19,7 @@ public class PasswordResetController {
 
     private final PasswordResetService resetService;
 
+    // Endpoint para solicitar el restablecimiento de contraseña
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestParam String email) {
         resetService.sendPasswordResetToken(email);
@@ -26,6 +27,7 @@ public class PasswordResetController {
 
     }
 
+    // Endpoint para restablecer la contraseña
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
 

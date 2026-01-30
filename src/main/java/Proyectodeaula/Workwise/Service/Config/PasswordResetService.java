@@ -10,9 +10,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import Proyectodeaula.Workwise.Model.Empresa;
-import Proyectodeaula.Workwise.Model.PasswordResetToken;
-import Proyectodeaula.Workwise.Model.Persona;
+import Proyectodeaula.Workwise.Model.Empresas.Empresa;
+import Proyectodeaula.Workwise.Model.Otros.PasswordResetToken;
+import Proyectodeaula.Workwise.Model.Personas.Persona;
 import Proyectodeaula.Workwise.Repository.Empresa.Repository_Emp;
 import Proyectodeaula.Workwise.Repository.General.PasswordResetTokenRepository;
 import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;

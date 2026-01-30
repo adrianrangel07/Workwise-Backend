@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import Proyectodeaula.Workwise.Model.Persona;
-import Proyectodeaula.Workwise.Model.Usuario;
+import Proyectodeaula.Workwise.Model.Otros.Usuario;
+import Proyectodeaula.Workwise.Model.Personas.Persona;
 import Proyectodeaula.Workwise.Repository.Persona.Repository_Persona;
 import Proyectodeaula.Workwise.RepositoryService.Usuarios.IpersonaService;
 

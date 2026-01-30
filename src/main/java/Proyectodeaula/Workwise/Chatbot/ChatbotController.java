@@ -18,6 +18,7 @@ public class ChatbotController {
         this.chatbotService = chatbotService;
     }
 
+    // Endpoint para manejar solicitudes de chat
     @PostMapping("/message")
     public Map<String, Object> procesarMensaje(@RequestBody Map<String, String> request) {
         String mensaje = request.get("mensaje");

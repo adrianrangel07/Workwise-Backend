@@ -4,7 +4,7 @@ package Proyectodeaula.Workwise.RepositoryService.Usuarios;
 import java.util.List;
 import java.util.Optional;
 
-import Proyectodeaula.Workwise.Model.Persona;
+import Proyectodeaula.Workwise.Model.Personas.Persona;
 
 public interface IpersonaService {
 

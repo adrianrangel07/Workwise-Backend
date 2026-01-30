@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import Proyectodeaula.Workwise.Model.CategoriaProfesional;
 import Proyectodeaula.Workwise.Model.Dto.OfertaPublicaDTO;
-import Proyectodeaula.Workwise.Model.Empresa;
-import Proyectodeaula.Workwise.Model.Habilidad;
-import Proyectodeaula.Workwise.Model.Oferta;
-import Proyectodeaula.Workwise.Model.OfertaHabilidad;
-import Proyectodeaula.Workwise.Model.OfertaHabilidadId;
-import Proyectodeaula.Workwise.Model.Persona;
+import Proyectodeaula.Workwise.Model.Empresas.Empresa;
+import Proyectodeaula.Workwise.Model.Ofertas.Oferta;
+import Proyectodeaula.Workwise.Model.Ofertas.OfertaHabilidad;
+import Proyectodeaula.Workwise.Model.Ofertas.OfertaHabilidadId;
+import Proyectodeaula.Workwise.Model.Otros.CategoriaProfesional;
+import Proyectodeaula.Workwise.Model.Otros.Habilidad;
+import Proyectodeaula.Workwise.Model.Personas.Persona;
 import Proyectodeaula.Workwise.Repository.Oferta.OfertaHabilidadRepository;
 import Proyectodeaula.Workwise.Repository.Oferta.OfertaRepository;
 import Proyectodeaula.Workwise.Repository.Persona.HabilidadRepository;
@@ -55,18 +55,19 @@ public class OfertaController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // ✅ Listar todas las ofertas activas
+    // Listar todas las ofertas activas
     @GetMapping
     public ResponseEntity<List<Oferta>> listarOfertas() {
         return ResponseEntity.ok(ofertaService.listarOfertas());
     }
 
+    // Listar todas las ofertas (incluso inactivas) para invitados
     @GetMapping("/home")
     public ResponseEntity<List<Oferta>> listarOfertasinvitado() {
         return ResponseEntity.ok(ofertaService.listarOfertas());
     }
 
-    // ✅ Buscar oferta por ID
+    // Buscar oferta por ID
     @GetMapping("/{id}")
     public ResponseEntity<Oferta> obtenerOferta(@PathVariable Long id) {
         Optional<Oferta> oferta = ofertaService.obtenerPorId(id);
@@ -74,7 +75,7 @@ public class OfertaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ✅ Actualizar oferta
+    // Actualizar oferta
     @PutMapping("/{id}")
     public ResponseEntity<Oferta> actualizarOferta(@PathVariable Long id, @RequestBody Oferta ofertaActualizada) {
         Optional<Oferta> ofertaOpt = ofertaService.actualizar(id, ofertaActualizada);
@@ -82,7 +83,7 @@ public class OfertaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ✅ Eliminar oferta
+    // Eliminar oferta
     @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarOferta(@PathVariable Long id) {
@@ -92,13 +93,13 @@ public class OfertaController {
         return ResponseEntity.notFound().build();
     }
 
-    // ✅ Listar ofertas por empresa
+    // Listar ofertas por empresa
     @GetMapping("/empresa/{empresaId}")
     public ResponseEntity<List<Oferta>> listarPorEmpresa(@PathVariable Long empresaId) {
         return ResponseEntity.ok(ofertaService.listarPorEmpresa(empresaId));
     }
 
-    // ✅ Cambiar estado activo/inactivo
+    // Cambiar estado activo/inactivo
     @PreAuthorize("hasAnyRole('EMPRESA', 'ADMIN')")
     @PutMapping("/{id}/toggle")
     public ResponseEntity<Oferta> toggleActivo(@PathVariable Long id) {
@@ -107,6 +108,7 @@ public class OfertaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Obtener ofertas compatibles con una persona según su categoría profesional
     @GetMapping("/compatibles/{personaId}")
     public ResponseEntity<?> obtenerOfertasCompatibles(@PathVariable Long personaId) {
         Persona persona = personaRepository.findById(personaId)
@@ -140,7 +142,7 @@ public class OfertaController {
         if (oferta == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La oferta no existe");
 
-        // ✅ Validar que la empresa dueña de la oferta es la que está autenticada
+        // Validar que la empresa dueña de la oferta es la que está autenticada
         Empresa empresa = oferta.getEmpresa();
         if (!empresa.getUsuario().getEmail().equals(email)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No puedes modificar ofertas de otra empresa");
