@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import Proyectodeaula.Workwise.Model.Dto.VerificarPasswordDTO;
+import Proyectodeaula.Workwise.Model.Dto.VerificationResponse;
 import Proyectodeaula.Workwise.Model.Otros.CategoriaProfesional;
 import Proyectodeaula.Workwise.Model.Otros.Habilidad;
 import Proyectodeaula.Workwise.Model.Otros.Usuario;
@@ -67,26 +68,72 @@ public class PersonaController {
     @PostMapping("/registrar")
     public ResponseEntity<?> registrarPersona(@RequestBody Persona persona) {
         try {
+            // Validaciones iniciales
             if (persona.getUsuario() == null || persona.getUsuario().getPassword().isBlank()) {
-                return ResponseEntity.badRequest().body("El usuario/contraseña no puede estar vacío");
+                return ResponseEntity.badRequest()
+                        .body("El usuario/contraseña no puede estar vacío");
             }
 
-            // Encriptar password
-            persona.getUsuario().setPassword(passwordEncoder.encode(persona.getUsuario().getPassword()));
-            persona.getUsuario().setRol("PERSONA");
+            String email = persona.getUsuario().getEmail();
 
+            // 🔍 Buscar persona existente por email
+            Persona existente = personaRepository.findByEmail(email);
+
+            // ==================== CASO: EMAIL YA EXISTE ====================
+            if (existente != null) {
+
+                // 🟢 Reactivar cuenta si estaba desactivada
+                if (!existente.isActivo()) {
+
+                    existente.setActivo(true);
+                    existente.setNombre(persona.getNombre());
+                    existente.setApellido(persona.getApellido());
+                    existente.setDireccion(persona.getDireccion());
+                    existente.setTelefono(persona.getTelefono());
+                    existente.setTipo_telefono(persona.getTipo_telefono());
+                    existente.setProfesion(persona.getProfesion());
+                    existente.setNumero_documento(persona.getNumero_documento());
+
+                    // Recalcular categoría
+                    CategoriaProfesional categoria = clasificacionService
+                            .obtenerCategoriaPorProfesion(persona.getProfesion());
+                    existente.setCategoria(categoria);
+
+                    // Actualizar contraseña
+                    existente.getUsuario().setPassword(
+                            passwordEncoder.encode(persona.getUsuario().getPassword()));
+
+                    personaRepository.save(existente);
+
+                    return ResponseEntity.ok("Cuenta reactivada correctamente");
+                }
+
+                // 🔴 Email existe y está activo
+                return ResponseEntity.badRequest()
+                        .body(new VerificationResponse(true, "El correo electrónico ya está registrado"));
+            }
+
+            // ==================== CASO: DOCUMENTO YA EXISTE ====================
+            if (personaRepository.existsByNumeroDocumento(persona.getNumero_documento())) {
+                return ResponseEntity.badRequest()
+                        .body(new VerificationResponse(true, "El número de documento ya está registrado"));
+            }
+
+            // ==================== REGISTRO NORMAL ====================
+            persona.getUsuario().setPassword(
+                    passwordEncoder.encode(persona.getUsuario().getPassword()));
+            persona.getUsuario().setRol("PERSONA");
             persona.setActivo(true);
 
             CategoriaProfesional categoria = clasificacionService.obtenerCategoriaPorProfesion(persona.getProfesion());
             persona.setCategoria(categoria);
 
-            // Guardar persona
             Persona saved = personaRepository.saveAndFlush(persona);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al registrar persona: " + e.getMessage());
         }
     }
@@ -115,7 +162,19 @@ public class PersonaController {
                 "rol", persona.getUsuario().getRol(),
                 "personaId", persona.getId(),
                 "nombre", persona.getNombre()));
-                
+
+    }
+
+    // ==================== ELIMINAR ====================
+    @PreAuthorize("hasAnyRole('PERSONA', 'ADMIN')")
+    @DeleteMapping("/eliminar")
+    public ResponseEntity<?> eliminarMiCuenta(@RequestHeader("Authorization") String authHeader) {
+        String email = jwtUtil.extractEmailFromHeader(authHeader);
+        Persona persona = personaRepository.findByEmail(email);
+
+        persona.setActivo(false);
+        personaRepository.save(persona);
+        return ResponseEntity.ok("Cuenta desactivada");
     }
 
     // ==================== PERFIL ====================

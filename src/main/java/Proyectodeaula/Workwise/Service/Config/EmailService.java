@@ -25,7 +25,7 @@ public class EmailService {
       helper.setTo(to);
       helper.setSubject(subject);
 
-      String linkVerificacion = "http://127.0.0.1:5500/verificacion.html?codigo=" + codigo; // enlace de direccion de
+      String linkVerificacion = "http://localhost:5500/verificacion.html?codigo=" + codigo; // enlace de direccion de
                                                                                             // verificacion
 
       String htmlContent = String.format(

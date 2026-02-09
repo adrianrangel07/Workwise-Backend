@@ -24,4 +24,12 @@ public interface Repository_Persona extends JpaRepository<Persona, Long> {
 
     @Query("SELECT p FROM Persona p WHERE p.usuario.email = :email")
     Optional<Persona> findOptionalByEmail(@Param("email") String email);
+
+     // Verifica si existe un email
+    @Query("SELECT COUNT(p) > 0 FROM Persona p WHERE p.usuario.email = :email")
+    boolean existsByEmail(@Param("email") String email);
+
+    // Verifica si existe un número de documento
+    @Query("SELECT COUNT(p) > 0 FROM Persona p WHERE p.numero_documento = :numeroDocumento")
+    boolean existsByNumeroDocumento(@Param("numeroDocumento") int numeroDocumento);
 }

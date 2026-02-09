@@ -30,13 +30,13 @@ public class OfertaHabilidad {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("ofertaId")
     @JoinColumn(name = "oferta_id")
-    @JsonIgnore // Ignorar la oferta para evitar ciclos
+    @JsonIgnore
     private Oferta oferta;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("habilidadId")
     @JoinColumn(name = "habilidad_id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Esto evita el problema del proxy
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Habilidad habilidad;
 
     public OfertaHabilidad(Oferta oferta, Habilidad habilidad) {
