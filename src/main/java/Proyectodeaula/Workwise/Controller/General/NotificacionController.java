@@ -1,8 +1,10 @@
 package Proyectodeaula.Workwise.Controller.General;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,16 +29,50 @@ public class NotificacionController {
     @Autowired
     private Repository_Persona personaRepository;
 
-    @GetMapping("/no-leidas")
-    public List<Notificacion> obtenerNoLeidas(Authentication authentication) {
+    @GetMapping("/no-leidas/count")
+    public ResponseEntity<?> contarNoLeidas(Authentication authentication) {
+        try {
+            String email = authentication.getName();
+            System.out.println("📧 Email del usuario: " + email);
 
-        String email = authentication.getName();
-        Persona persona = personaRepository.findByEmail(email);
-        if (persona == null) {
-            throw new RuntimeException("Persona no encontrada");
+            Persona persona = personaRepository.findByEmail(email);
+
+            if (persona == null) {
+                System.out.println("❌ Persona no encontrada con email: " + email);
+                return ResponseEntity.ok(0L); // Retornar 0 en lugar de error
+            }
+
+            Long count = service.contarNoLeidas(persona.getId());
+            System.out.println("📊 Notificaciones no leídas para persona " + persona.getId() + ": " + count);
+
+            return ResponseEntity.ok(count);
+        } catch (Exception e) {
+            System.err.println("❌ Error al contar notificaciones: " + e.getMessage());
+            return ResponseEntity.ok(0L);
         }
+    }
 
-        return service.obtenerNoLeidas(persona.getId());
+    @GetMapping("/no-leidas")
+    public ResponseEntity<?> obtenerNoLeidas(Authentication authentication) {
+        try {
+            String email = authentication.getName();
+            System.out.println("Obteniendo notificaciones para: " + email);
+
+            Persona persona = personaRepository.findByEmail(email);
+
+            if (persona == null) {
+                System.out.println("❌ Persona no encontrada");
+                return ResponseEntity.ok(new ArrayList<>());
+            }
+
+            List<Notificacion> notificaciones = service.obtenerNoLeidas(persona.getId());
+            System.out.println("📋 Notificaciones encontradas: " + notificaciones.size());
+
+            return ResponseEntity.ok(notificaciones);
+        } catch (Exception e) {
+            System.err.println("❌ Error: " + e.getMessage());
+            return ResponseEntity.ok(new ArrayList<>());
+        }
     }
 
     @PutMapping("/{id}/leida")

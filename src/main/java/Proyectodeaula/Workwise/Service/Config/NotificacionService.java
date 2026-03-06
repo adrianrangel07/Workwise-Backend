@@ -10,7 +10,7 @@ import Proyectodeaula.Workwise.Repository.General.NotificacionRepository;
 
 @Service
 public class NotificacionService {
-    
+
     @Autowired
     private NotificacionRepository repository;
 
@@ -42,4 +42,8 @@ public class NotificacionService {
         n.setLeido(true);
         repository.save(n);
     }
+
+    public Long contarNoLeidas(Long userId) {
+        return repository.countByUserIdAndLeidoFalse(userId);
+    }   
 }

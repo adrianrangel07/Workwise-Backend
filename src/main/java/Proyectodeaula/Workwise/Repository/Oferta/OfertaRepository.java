@@ -18,4 +18,7 @@ public interface OfertaRepository extends JpaRepository<Oferta, Long> {
 
     List<Oferta> findByCategoriaNombreIgnoreCase(String nombreCategoria);
 
+    List<Oferta> findByTituloContainingIgnoreCaseOrDescripcionContainingIgnoreCase(
+            String titulo,
+            String descripcion);
 }

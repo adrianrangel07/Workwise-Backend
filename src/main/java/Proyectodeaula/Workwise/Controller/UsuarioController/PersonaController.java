@@ -257,7 +257,7 @@ public class PersonaController {
             headers.setContentType(MediaType.IMAGE_PNG);
             return new ResponseEntity<>(imagen, headers, HttpStatus.OK);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.noContent().build(); // 204
     }
 
     // ==================== CONTRASEÑA ====================

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import Proyectodeaula.Workwise.Model.Dto.OfertaPublicaDTO;
@@ -125,7 +126,7 @@ public class OfertaController {
 
         return ResponseEntity.ok(ofertasDTO);
     }
-    
+
     /**
      * Agrega una habilidad a una oferta específica
      */
@@ -216,5 +217,13 @@ public class OfertaController {
         ofertaHabilidadRepository.deleteById(ohId);
         return ResponseEntity.ok("Habilidad eliminada exitosamente de la oferta");
     }
-    
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Oferta>> buscarOfertas(@RequestParam String termino) {
+        List<Oferta> ofertas = ofertaRepository
+                .findByTituloContainingIgnoreCaseOrDescripcionContainingIgnoreCase(termino, termino);
+
+        return ResponseEntity.ok(ofertas);
+    }
+
 }
