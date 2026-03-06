@@ -34,7 +34,6 @@ import Proyectodeaula.Workwise.Security.Token.JwtUtil;
 import Proyectodeaula.Workwise.Service.Ofertas.OfertaService;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api/ofertas")
 public class OfertaController {
 
