@@ -39,6 +39,8 @@ Publicación Inteligente: Formularios guiados para creación de vacantes
 
 Filtros Avanzados: Búsqueda por categoría, salario, experiencia y ubicación
 
+
+
 Estados Múltiples: Abierta, Cerrada, En revisión
 
 Estadísticas: Visualizaciones para empresas y/o personas
