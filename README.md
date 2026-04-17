@@ -40,7 +40,6 @@ Publicación Inteligente: Formularios guiados para creación de vacantes
 Filtros Avanzados: Búsqueda por categoría, salario, experiencia y ubicación
 
 
-
 Estados Múltiples: Abierta, Cerrada, En revisión
 
 Estadísticas: Visualizaciones para empresas y/o personas
@@ -151,4 +150,6 @@ Stack Principal: Java | Spring Boot | Angular | Docker | MySQL
 <p align="center"> <em>✨ Conectando el talento cartagenero con las oportunidades del mañana ✨</em> </p><p align="center"> <img src="https://img.shields.io/badge/🇨🇴-Hecho%20en%20Cartagena-yellow" /> <img src="https://img.shields.io/badge/🚀-Producción%20Ready-green" /> </p>
 
 🔗 **Visita el Frontend del Proyecto:**  
-[![Front WorkWise](https://img.shields.io/badge/Front--WorkWise-Visit-0366d6?logo=github&logoColor=white)]([https://github.com/adrianrangel07/Front-WorkWise](https://github.com/yonierva/Front-WorkWise))
+[![Front WorkWise](https://img.shields.io/badge/Front--WorkWise-Visit-0366d6?logo=github&logoColor=white)]([https://github.com/adrianrangel07/Front-WorkWise](https://github.com/yonierva/Front-WorkWise)
+
+hola
