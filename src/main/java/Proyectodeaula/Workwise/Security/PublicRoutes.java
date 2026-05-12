@@ -18,6 +18,7 @@ public class PublicRoutes {
                 "/api/ofertas/home",
                 "/api/chat",
                 "/api/password/**",
+                "/api/prediccion/ofertas/**",
                 "/api/verificacion/**");
     }
 }

@@ -21,7 +21,7 @@ import Proyectodeaula.Workwise.Service.Config.MlClient.PrediccionResponse;
  * a través del modal en la app, y esos datos llegan en el body.
  */
 @RestController
-@RequestMapping("/api/ofertas")
+@RequestMapping("/api/prediccion/ofertas")
 public class PrediccionController {
 
     private final MlClient mlClient;
@@ -42,7 +42,7 @@ public class PrediccionController {
     // ─── Endpoint principal ───────────────────────────────────────────────────
 
     /**
-     * POST /api/ofertas/{id}/predecir
+     * POST /api/prediccion/ofertas/{id}/predecir
      *
      * Body (JSON):
      * {
