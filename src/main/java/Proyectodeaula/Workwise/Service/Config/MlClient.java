@@ -64,7 +64,7 @@ public class MlClient {
             entity,
             PrediccionResponse.class
         );
-
+        System.out.println("ML API URL = " + mlApiUrl);
         return response.getBody();
     }
 
