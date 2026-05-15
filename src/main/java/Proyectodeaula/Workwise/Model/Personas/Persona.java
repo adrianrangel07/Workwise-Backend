@@ -40,8 +40,8 @@ public class Persona {
     private String nombre;
     @Column(name = "apellido", columnDefinition = "varchar(50)", nullable = false)
     private String apellido;
-    @Column(name = "numero_documento", columnDefinition = "int", nullable = false, unique = true)
-    private int numero_documento;
+    @Column(name = "numero_documento", columnDefinition = "long", nullable = false, unique = true)
+    private long numero_documento;
     @Column(name = "tipo_Documento", columnDefinition = "varchar(20)", nullable = false)
     private String tipo_Documento;
     @Column(name = "fecha_Nacimiento", columnDefinition = "date", nullable = false)

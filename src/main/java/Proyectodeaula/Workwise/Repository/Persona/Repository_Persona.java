@@ -31,5 +31,5 @@ public interface Repository_Persona extends JpaRepository<Persona, Long> {
 
     // Verifica si existe un número de documento
     @Query("SELECT COUNT(p) > 0 FROM Persona p WHERE p.numero_documento = :numeroDocumento")
-    boolean existsByNumeroDocumento(@Param("numeroDocumento") int numeroDocumento);
+    boolean existsByNumeroDocumento(@Param("numeroDocumento") Long numeroDocumento);
 }

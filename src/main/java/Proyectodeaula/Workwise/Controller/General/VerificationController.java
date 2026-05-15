@@ -31,7 +31,7 @@ public class VerificationController {
 
     // Verificar si el documento existe
     @GetMapping("/verificar-documento")
-    public ResponseEntity<VerificationResponse> verificarDocumento(@RequestParam int numeroDocumento) {
+    public ResponseEntity<VerificationResponse> verificarDocumento(@RequestParam Long numeroDocumento) {
         boolean existe = personaRepository.existsByNumeroDocumento(numeroDocumento);
         String mensaje = existe ? "El número de documento ya está registrado" : "Documento disponible";
 
@@ -42,7 +42,7 @@ public class VerificationController {
     @GetMapping("/verificar-registro")
     public ResponseEntity<Map<String, Object>> verificarRegistro(
             @RequestParam(required = false) String email,
-            @RequestParam(required = false) Integer numeroDocumento) {
+            @RequestParam(required = false) Long numeroDocumento) {
 
         Map<String, Object> response = new HashMap<>();
 
