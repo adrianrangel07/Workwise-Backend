@@ -1,7 +1,5 @@
 package Proyectodeaula.Workwise.Service.Config;
 
-import java.text.Normalizer;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,9 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Cliente HTTP que llama a la API Python desplegada en Render.
- * Normaliza automáticamente los valores antes de enviarlos
- * (elimina tildes para compatibilidad con la API Python).
+ * Cliente HTTP hacia la API Python v2.
+ * Envía las 7 variables ya calculadas por PrediccionController.
  */
 @Service
 public class MlClient {
@@ -21,17 +18,22 @@ public class MlClient {
     @Value("${ml.api.url}")
     private String mlApiUrl;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public MlClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     // ─── DTOs ────────────────────────────────────────────────────────────────
 
     public record PrediccionRequest(
-        String tipo_empleo,
-        String modalidad,
-        String tipo_contrato,
-        int    experiencia,
-        String nivel_estudio,
-        String sector
+        int    experiencia_candidato,
+        int    cumple_experiencia,
+        int    brecha_experiencia,
+        int    nivel_candidato,
+        int    cumple_nivel,
+        double match_habilidades,
+        int    match_categoria
     ) {}
 
     public record PrediccionResponse(
@@ -41,45 +43,20 @@ public class MlClient {
         String  mensaje
     ) {}
 
-    // ─── Método principal ─────────────────────────────────────────────────────
+    // ─── Llamada a Python ─────────────────────────────────────────────────────
 
     public PrediccionResponse predecir(PrediccionRequest request) {
-        // Normalizar antes de enviar (quita tildes)
-        PrediccionRequest normalizado = new PrediccionRequest(
-            normalizar(request.tipo_empleo()),
-            normalizar(request.modalidad()),
-            normalizar(request.tipo_contrato()),
-            request.experiencia(),
-            normalizar(request.nivel_estudio()),
-            normalizar(request.sector())
-        );
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<PrediccionRequest> entity = new HttpEntity<>(normalizado, headers);
+        HttpEntity<PrediccionRequest> entity = new HttpEntity<>(request, headers);
 
         ResponseEntity<PrediccionResponse> response = restTemplate.postForEntity(
             mlApiUrl + "/predict",
             entity,
             PrediccionResponse.class
         );
-        System.out.println("ML API URL = " + mlApiUrl);
+
         return response.getBody();
-    }
-
-    // ─── Normalización ────────────────────────────────────────────────────────
-
-    /**
-     * Elimina tildes y diacríticos para compatibilidad con la API Python.
-     * Ej: "Tecnología" → "Tecnologia"
-     *     "Construcción" → "Construccion"
-     *     "Diseño" → "Diseno"
-     */
-    private String normalizar(String valor) {
-        if (valor == null) return null;
-        return Normalizer
-            .normalize(valor, Normalizer.Form.NFD)
-            .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 }
