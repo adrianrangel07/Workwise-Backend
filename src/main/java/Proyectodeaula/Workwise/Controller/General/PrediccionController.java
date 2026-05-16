@@ -21,17 +21,13 @@ import Proyectodeaula.Workwise.Security.Token.JwtUtil;
 import Proyectodeaula.Workwise.Service.Config.MlClient;
 import Proyectodeaula.Workwise.Service.Config.MlClient.PrediccionResponse;
 
-
-
-
-
 /**
  * POST /api/ofertas/{id}/predecir
  *
  * Body:
  * {
- *   "experiencia":   3,
- *   "nivel_estudio": "Universitario"
+ * "experiencia": 3,
+ * "nivel_estudio": "Universitario"
  * }
  *
  * Spring Boot calcula las 7 variables y llama a la API Python.
@@ -42,36 +38,36 @@ public class PrediccionController {
 
     // Mapa de nivel de estudio → peso numérico (igual que en Python)
     private static final Map<String, Integer> NIVEL_PESO = Map.of(
-        "Sin_estudios",            0,
-        "Bachiller",               1,
-        "Tecnico_Tecnologo",       2,
-        "Tecnologo_Universitario", 3,
-        "Universitario",           4,
-        "Master",                  5,
-        "Doctorado",               6
-    );
+            "Sin_estudios", 0,
+            "Bachiller", 1,
+            "Tecnico_Tecnologo", 2,
+            "Tecnologo_Universitario", 3,
+            "Universitario", 4,
+            "Master", 5,
+            "Doctorado", 6);
 
-    private final MlClient         mlClient;
+    private final MlClient mlClient;
     private final OfertaRepository ofertaRepo;
     private final Repository_Persona personaRepo;
-    private final JwtUtil          jwtUtil;
+    private final JwtUtil jwtUtil;
 
     public PrediccionController(MlClient mlClient,
-                                OfertaRepository ofertaRepo,
-                                Repository_Persona personaRepo,
-                                JwtUtil jwtUtil) {
-        this.mlClient    = mlClient;
-        this.ofertaRepo  = ofertaRepo;
+            OfertaRepository ofertaRepo,
+            Repository_Persona personaRepo,
+            JwtUtil jwtUtil) {
+        this.mlClient = mlClient;
+        this.ofertaRepo = ofertaRepo;
         this.personaRepo = personaRepo;
-        this.jwtUtil     = jwtUtil;
+        this.jwtUtil = jwtUtil;
     }
 
     // ─── DTO entrada ─────────────────────────────────────────────────────────
 
     public record CandidatoInput(
-        int    experiencia,    // años de experiencia del candidato
-        String nivel_estudio   // nivel de estudio del candidato
-    ) {}
+            int experiencia, // años de experiencia del candidato
+            String nivel_estudio // nivel de estudio del candidato
+    ) {
+    }
 
     // ─── Endpoint ────────────────────────────────────────────────────────────
 
@@ -83,10 +79,10 @@ public class PrediccionController {
 
         // 1. Obtener la oferta
         Oferta oferta = ofertaRepo.findById(id)
-            .orElseThrow(() -> new RuntimeException("Oferta no encontrada: " + id));
+                .orElseThrow(() -> new RuntimeException("Oferta no encontrada: " + id));
 
         // 2. Obtener el perfil del candidato autenticado
-        String email   = jwtUtil.extractEmailFromHeader(authHeader);
+        String email = jwtUtil.extractEmailFromHeader(authHeader);
         Persona persona = personaRepo.findByEmail(email);
         if (persona == null) {
             return ResponseEntity.status(401).body("Usuario no encontrado");
@@ -95,26 +91,26 @@ public class PrediccionController {
         // 3. Calcular las 7 variables
 
         // 3a. Experiencia
-        int expCandidato   = candidato.experiencia();
-        int expOferta      = oferta.getExperiencia();
-        int cumpleExp      = expCandidato >= expOferta ? 1 : 0;
-        int brechaExp      = expCandidato - expOferta;
+        int expCandidato = candidato.experiencia();
+        int expOferta = oferta.getExperiencia();
+        int cumpleExp = expCandidato >= expOferta ? 1 : 0;
+        int brechaExp = expCandidato - expOferta;
 
         // 3b. Nivel de estudio
         int nivelCandidato = NIVEL_PESO.getOrDefault(candidato.nivel_estudio(), 0);
-        int nivelOferta    = NIVEL_PESO.getOrDefault(normalizar(oferta.getNivel_Educacion()), 0);
-        int cumpleNivel    = nivelCandidato >= nivelOferta ? 1 : 0;
+        int nivelOferta = NIVEL_PESO.getOrDefault(normalizar(oferta.getNivel_Educacion()), 0);
+        int cumpleNivel = nivelCandidato >= nivelOferta ? 1 : 0;
 
         // 3c. Match de habilidades
-        //     Habilidades que requiere la oferta
+        // Habilidades que requiere la oferta
         Set<Long> idsOferta = oferta.getHabilidades().stream()
-            .map(oh -> oh.getHabilidad().getId())
-            .collect(Collectors.toSet());
+                .map(oh -> oh.getHabilidad().getId())
+                .collect(Collectors.toSet());
 
-        //     Habilidades que tiene el candidato
+        // Habilidades que tiene el candidato
         Set<Long> idsPersona = persona.getHabilidades().stream()
-            .map(ph -> ph.getHabilidad().getId())
-            .collect(Collectors.toSet());
+                .map(ph -> ph.getHabilidad().getId())
+                .collect(Collectors.toSet());
 
         double matchHabilidades = 0.0;
         if (!idsOferta.isEmpty()) {
@@ -125,7 +121,7 @@ public class PrediccionController {
         // 3d. Match de categoría
         int matchCategoria = 0;
         CategoriaProfesional catPersona = persona.getCategoria();
-        CategoriaProfesional catOferta  = oferta.getCategoria();
+        CategoriaProfesional catOferta = oferta.getCategoria();
         if (catPersona != null && catOferta != null
                 && catPersona.getId().equals(catOferta.getId())) {
             matchCategoria = 1;
@@ -133,32 +129,29 @@ public class PrediccionController {
 
         // 4. Construir request para Python
         MlClient.PrediccionRequest request = new MlClient.PrediccionRequest(
-            expCandidato,
-            cumpleExp,
-            brechaExp,
-            nivelCandidato,
-            cumpleNivel,
-            matchHabilidades,
-            matchCategoria
-        );
+                expCandidato,
+                cumpleExp,
+                brechaExp,
+                nivelCandidato,
+                cumpleNivel,
+                matchHabilidades,
+                matchCategoria);
 
         // 5. Llamar a la API Python
         PrediccionResponse response = mlClient.predecir(request);
 
         // 6. Enriquecer la respuesta con el detalle calculado
         return ResponseEntity.ok(Map.of(
-            "aceptado",     response.aceptado(),
-            "probabilidad", response.probabilidad(),
-            "confianza",    response.confianza(),
-            "mensaje",      response.mensaje(),
-            "detalle", Map.of(
-                "cumple_experiencia",    cumpleExp == 1,
-                "brecha_experiencia",    brechaExp,
-                "cumple_nivel_estudio",  cumpleNivel == 1,
-                "match_habilidades_pct", (int)(matchHabilidades * 100),
-                "match_categoria",       matchCategoria == 1
-            )
-        ));
+                "aceptado", response.aceptado(),
+                "probabilidad", response.probabilidad(),
+                "confianza", response.confianza(),
+                "mensaje", response.mensaje(),
+                "detalle", Map.of(
+                        "cumple_experiencia", cumpleExp == 1,
+                        "brecha_experiencia", brechaExp,
+                        "cumple_nivel_estudio", cumpleNivel == 1,
+                        "match_habilidades_pct", (int) (matchHabilidades * 100),
+                        "match_categoria", matchCategoria == 1)));
     }
 
     /**
@@ -171,9 +164,20 @@ public class PrediccionController {
      * Si usas "universitario" → falla. Ajusta según tus datos reales.
      */
     private String normalizar(String valor) {
-        if (valor == null) return "";
-        return java.text.Normalizer
-            .normalize(valor, java.text.Normalizer.Form.NFD)
-            .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        if (valor == null)
+            return "";
+        String s = java.text.Normalizer
+                .normalize(valor, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        // Mapeo explícito por si los valores en BD no coinciden exactamente
+        return switch (s.toLowerCase().trim()) {
+            case "tecnico", "tecnologo", "tecnico/tecnologo" -> "Tecnico_Tecnologo";
+            case "tecnologo universitario" -> "Tecnologo_Universitario";
+            case "universitario" -> "Universitario";
+            case "bachiller" -> "Bachiller";
+            case "master", "maestria" -> "Master";
+            case "doctorado" -> "Doctorado";
+            default -> s;
+        };
     }
 }
